@@ -1,0 +1,12 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+libdir=@CMAKE_INSTALL_PREFIX@/lib
+localstatedir=@CMAKE_INSTALL_PREFIX@/var
+includedir=@CMAKE_INSTALL_PREFIX@/include
+
+Name: libunizip
+Description: light-weighted container runtime library
+Version: @UNIZIP_VERSION@
+URL: libunizip
+Libs: -L@CMAKE_INSTALL_PREFIX@/lib -lunizip
+Cflags: -I@CMAKE_INSTALL_PREFIX@/include
+
