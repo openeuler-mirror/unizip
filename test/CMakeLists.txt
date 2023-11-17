@@ -12,9 +12,9 @@ find_package(Snappy REQUIRED)
 find_package(Brotli REQUIRED)
 find_package(LZ4 REQUIRED)
 # uadk
-find_library(LIBWD_LIBRARY wd
-	HINTS ${PC_LIBWD_LIBDIR} ${PC_LIBWD_LIBRARY_DIRS})
-_CHECK(LIBWD_LIBRARY "LIBWD_LIBRARY-NOTFOUND" "libwd.so")
+# find_library(LIBWD_LIBRARY wd
+# 	HINTS ${PC_LIBWD_LIBDIR} ${PC_LIBWD_LIBRARY_DIRS})
+# _CHECK(LIBWD_LIBRARY "LIBWD_LIBRARY-NOTFOUND" "libwd.so")
 
 add_library(7zip OBJECT IMPORTED)
 set_property(TARGET 7zip PROPERTY IMPORTED_LOCATION /usr/lib64/7z)
