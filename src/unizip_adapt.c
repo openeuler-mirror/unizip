@@ -33,7 +33,8 @@ int get_algorithm(void) {
         value = atoi(lib_value);
     if (cb == NULL) {
         if ((cb = (callback_t *)malloc(sizeof(callback_t))) == NULL) {
-            return -1;
+            ERR_CODE("callback initialize failed!\n");
+            return UNIZIP_ALGO_ERROR;
         }
     }
     switch (value) {
