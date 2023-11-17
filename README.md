@@ -4,20 +4,27 @@
 the framework of integrating existing archiving libraries into unified program interfaces
 
 #### 软件架构
-软件架构说明
+&emsp;&emsp;见[document/design](./document/design.md)
 
 
 #### 安装教程
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+1. 执行如下命令安装gmock-devel、cmake、make、zlib-devel、LibLZMA、BZip2、Zstd、Snappy、Brotli、lz4
+    ```
+    yum install -y gmock-devel cmake make gcc-c++ bzip2-devel zlib-devel xz-devel libzstd-devel snappy-devel brotli-devel lz4-devel
+    ```
+2.  使用如下命令clone代码
+    ```
+    git clone https://gitee.com/openeuler/unizip.git
+    ```
+
 
 #### 使用说明
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+1.  进入ifm_nettle目录，使用如下命令运行build.sh进行测试
+    ```
+    ./build.sh
+    ```
 
 #### 参与贡献
 
@@ -25,13 +32,3 @@ the framework of integrating existing archiving libraries into unified program i
 2.  新建 Feat_xxx 分支
 3.  提交代码
 4.  新建 Pull Request
-
-
-#### 特技
-
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
