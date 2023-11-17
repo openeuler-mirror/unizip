@@ -158,7 +158,7 @@ target_link_libraries(mock_ut
     pthread
     ${BROTLI_LIBRARIES}
     )
-add_dependencies(mock_ut zlib_util xz_util)
+add_dependencies(mock_ut zlib_util)
 
 IF(ENABLE_GCOV)
     add_custom_target(coverage
