@@ -11,9 +11,9 @@ find_package(Zstd REQUIRED)
 find_package(Snappy REQUIRED)
 find_package(Brotli REQUIRED)
 find_package(LZ4 REQUIRED)
-find_library(LIBWD_LIBRARY wd
-	HINTS ${PC_LIBWD_LIBDIR} ${PC_LIBWD_LIBRARY_DIRS})
-_CHECK(LIBWD_LIBRARY "LIBWD_LIBRARY-NOTFOUND" "libwd.so")
+# find_library(LIBWD_LIBRARY wd
+# 	HINTS ${PC_LIBWD_LIBDIR} ${PC_LIBWD_LIBRARY_DIRS})
+# _CHECK(LIBWD_LIBRARY "LIBWD_LIBRARY-NOTFOUND" "libwd.so")
 
 
 
@@ -44,7 +44,7 @@ macro(_DEFINE_NEW_TEST)
         ${ZLIB_LIBRARIES} 
         ${BZIP2_LIBRARIES} 
         ${SNAPPY_LIBRARIES} 
-        ${LIBWD_LIBRARY}  #uadk
+        #${LIBWD_LIBRARY}  #uadk
         libzstd.so 
         ${LZ4_LIBRARIES}
         ${BROTLI_LIBRARIES}

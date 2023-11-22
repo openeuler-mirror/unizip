@@ -22,7 +22,7 @@
 
 set(check_zlib_libs
     ${LIBZLIB_LIBRARY}
-    ${LIBWD_LIBRARY}
+    #${LIBWD_LIBRARY}
     )
 
 list(REMOVE_DUPLICATES check_zlib_libs)
