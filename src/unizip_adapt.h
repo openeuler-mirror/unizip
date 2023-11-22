@@ -26,15 +26,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// #include "unizip_callback_brotli.h"
-// #include "unizip_callback_bzip2.h"
-// #include "unizip_callback_gzip.h"
-// #include "unizip_callback_snappy.h"
-// #include "unizip_callback_xz.h"
 #include "unizip_callback_zlib.h"
-// #include "unizip_callback_zstd.h"
-// #include "unizip_callback_lz4.h"
-//#include "unizip_callback_uadk.h"
 #include "unizip_struct.h"
 
 #ifdef __cplusplus

@@ -40,16 +40,7 @@ if (ENABLE_LIBUNIZIP)
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${CMAKE_BINARY_DIR}/conf
         ${check_incs}
-        # ${CMAKE_CURRENT_SOURCE_DIR}/xz
-        # ${CMAKE_CURRENT_SOURCE_DIR}/snappy
-        # ${CMAKE_CURRENT_SOURCE_DIR}/gzip
-        # ${CMAKE_CURRENT_SOURCE_DIR}/bzip2
         ${CMAKE_CURRENT_SOURCE_DIR}/zlib
-        # ${CMAKE_CURRENT_SOURCE_DIR}/zstd
-        # ${CMAKE_CURRENT_SOURCE_DIR}/7zip
-        # ${CMAKE_CURRENT_SOURCE_DIR}/brotli
-        # ${CMAKE_CURRENT_SOURCE_DIR}/lz4
-        #${CMAKE_CURRENT_SOURCE_DIR}/uadk
     )
 
     # set libunizip include dirs

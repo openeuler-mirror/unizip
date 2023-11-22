@@ -27,14 +27,14 @@
 callback_t *cb = NULL;
 int value = 2;
 void set_value(int v) { value = v; }
-int get_algorithm(void) {
+int get_algorithm(void)
+{
     char *lib_value = getenv("LIB_VALUE");
     if (lib_value != NULL)
         value = atoi(lib_value);
     if (cb == NULL) {
         if ((cb = (callback_t *)malloc(sizeof(callback_t))) == NULL) {
-            ERR_CODE("callback initialize failed!\n");
-            return UNIZIP_ALGO_ERROR;
+            return -1;
         }
     }
     switch (value) {
@@ -43,35 +43,27 @@ int get_algorithm(void) {
             zlib_init(cb);
             break;
         case CASE_BZIP2:
-            //bzip2_init(cb);
             break;
         case CASE_BROTLI:
             // brotli
-            //brotli_init(cb);
             break;
         case CASE_LZ4:
             // lz4
-            //lz4_init(cb);
             break;
         case CASE_SNAPPY:
-            //snappy_init(cb);
             break;
         case CASE_ZSTD:
-            //zstd_init(cb);
             break;
         case CASE_7ZIP:
             // 7zip
             break;
         case CASE_UADK:
             // uadk
-            //uadk_init(cb);
             break;
         case CASE_XZ:
-            //xz_init(cb);
             break;
         case CASE_GZIP:
             // gzip
-            //gzip_init(cb);
             break;
         default:
             ERR_CODE("Invalid OPTION value in environment variable.\n");
@@ -81,7 +73,8 @@ int get_algorithm(void) {
 }
 
 // 获取软件包版本号
-const char *unizip_Version(void) {
+const char *unizip_Version(void)
+{
     if (get_algorithm() == UNIZIP_ALGO_ERROR) {
         ERR_CODE("undifined algo\n");
         return "can't find algo!\n";
@@ -90,7 +83,8 @@ const char *unizip_Version(void) {
 }
 
 // 压缩器初始化
-int unizip_deflateInit(unizip_streamp strm, int level) {
+int unizip_deflateInit(unizip_streamp strm, int level)
+{
     if (get_algorithm() == UNIZIP_ALGO_ERROR) {
         return UNIZIP_ALGO_ERROR;
     }
@@ -99,7 +93,8 @@ int unizip_deflateInit(unizip_streamp strm, int level) {
 }
 
 // 解压器初始化
-int unizip_inflateInit(unizip_streamp strm) {
+int unizip_inflateInit(unizip_streamp strm)
+{
     if (get_algorithm() == UNIZIP_ALGO_ERROR) {
         return UNIZIP_ALGO_ERROR;
     }
@@ -107,7 +102,8 @@ int unizip_inflateInit(unizip_streamp strm) {
 }
 
 // 压缩结束
-int unizip_deflateEnd(unizip_streamp strm) {
+int unizip_deflateEnd(unizip_streamp strm)
+{
     if (get_algorithm() == UNIZIP_ALGO_ERROR) {
         return UNIZIP_ALGO_ERROR;
     }
@@ -115,7 +111,8 @@ int unizip_deflateEnd(unizip_streamp strm) {
 }
 
 //解压结束
-int unizip_inflateEnd(unizip_streamp strm) {
+int unizip_inflateEnd(unizip_streamp strm)
+{
     if (get_algorithm() == UNIZIP_ALGO_ERROR) {
         return UNIZIP_ALGO_ERROR;
     }
@@ -123,7 +120,8 @@ int unizip_inflateEnd(unizip_streamp strm) {
 }
 
 //压缩函数，根据压缩器的属性进行压缩
-int unizip_deflate(unizip_streamp strm, int flush) {
+int unizip_deflate(unizip_streamp strm, int flush)
+{
     if (get_algorithm() == UNIZIP_ALGO_ERROR) {
         return UNIZIP_ALGO_ERROR;
     }
@@ -131,7 +129,8 @@ int unizip_deflate(unizip_streamp strm, int flush) {
 }
 
 //解压函数，根据解压器的属性进行解压
-int unizip_inflate(unizip_streamp strm, int flush) {
+int unizip_inflate(unizip_streamp strm, int flush)
+{
     if (get_algorithm() == UNIZIP_ALGO_ERROR) {
         return UNIZIP_ALGO_ERROR;
     }
@@ -141,7 +140,8 @@ int unizip_inflate(unizip_streamp strm, int flush) {
 // Common API
 
 // 压缩器复制
-int unizip_deflateCopy(unizip_streamp dest, unizip_streamp source) {
+int unizip_deflateCopy(unizip_streamp dest, unizip_streamp source)
+{
     if (get_algorithm() == UNIZIP_ALGO_ERROR) {
         return UNIZIP_ALGO_ERROR;
     }
@@ -149,7 +149,8 @@ int unizip_deflateCopy(unizip_streamp dest, unizip_streamp source) {
 }
 
 // 解压器复制
-int unizip_inflateCopy(unizip_streamp dest, unizip_streamp source) {
+int unizip_inflateCopy(unizip_streamp dest, unizip_streamp source)
+{
     if (get_algorithm() == UNIZIP_ALGO_ERROR) {
         return UNIZIP_ALGO_ERROR;
     }
@@ -157,7 +158,8 @@ int unizip_inflateCopy(unizip_streamp dest, unizip_streamp source) {
 }
 
 // 根据错误码输出错误信息
-const char *unizip_zError(int err) {
+const char *unizip_zError(int err)
+{
     if (get_algorithm() == UNIZIP_ALGO_ERROR) {
         ERR_CODE("undifined algo\n");
         return "undifined algo\n";
@@ -166,7 +168,8 @@ const char *unizip_zError(int err) {
 }
 
 // 压缩器重置，等价于先end再init
-int unizip_deflateReset(unizip_streamp strm) {
+int unizip_deflateReset(unizip_streamp strm)
+{
     // end + init
     if (get_algorithm() == UNIZIP_ALGO_ERROR) {
         return UNIZIP_ALGO_ERROR;
@@ -175,7 +178,8 @@ int unizip_deflateReset(unizip_streamp strm) {
 }
 
 // 解压器重置，等价于先end再init
-int unizip_inflateReset(unizip_streamp strm) {
+int unizip_inflateReset(unizip_streamp strm)
+{
     // end + init
     if (get_algorithm() == UNIZIP_ALGO_ERROR) {
         return UNIZIP_ALGO_ERROR;
@@ -185,7 +189,8 @@ int unizip_inflateReset(unizip_streamp strm) {
 
 // 压缩，根据源文件和输出文件首地址及长度完成操作
 int unizip_compress(Bytef *dest, uLongf *destLen, const Bytef *source,
-                    uLong sourceLen) {
+                    uLong sourceLen)
+{
     if (get_algorithm() == UNIZIP_ALGO_ERROR) {
         return UNIZIP_ALGO_ERROR;
     }
@@ -194,7 +199,8 @@ int unizip_compress(Bytef *dest, uLongf *destLen, const Bytef *source,
 
 // 解压，根据源文件和输出文件首地址及长度完成操作
 int unizip_uncompress(Bytef *dest, uLongf *destLen, const Bytef *source,
-                      uLong sourceLen) {
+                      uLong sourceLen)
+{
     if (get_algorithm() == UNIZIP_ALGO_ERROR) {
         return UNIZIP_ALGO_ERROR;
     }
@@ -202,12 +208,11 @@ int unizip_uncompress(Bytef *dest, uLongf *destLen, const Bytef *source,
 }
 
 // 压缩文件长度预估
-uLong unizip_compressBound(uLong sourceLen) {
+uLong unizip_compressBound(uLong sourceLen)
+{
     if (get_algorithm() == UNIZIP_ALGO_ERROR) {
         return UNIZIP_ALGO_ERROR;
     }
-    if (value == CASE_UADK)
-        return compressBound(sourceLen);
     return cb->compressBoundCB(sourceLen);
 }
 
@@ -215,7 +220,8 @@ uLong unizip_compressBound(uLong sourceLen) {
 
 // zlib提供的压缩器初始化
 int unizip_deflateInit2(unizip_streamp strm, int level, int method,
-                        int windowBits, int memLevel, int strategy) {
+                        int windowBits, int memLevel, int strategy)
+{
     if (value == CASE_ZLIB)
         return deflateInit2((z_stream *)strm, level, method, windowBits,
                             memLevel, strategy);
@@ -223,7 +229,8 @@ int unizip_deflateInit2(unizip_streamp strm, int level, int method,
 }
 
 // zlib提供的解压器初始化
-int unizip_inflateInit2(unizip_streamp strm, int windowBits) {
+int unizip_inflateInit2(unizip_streamp strm, int windowBits)
+{
     if (value == CASE_ZLIB)
         return inflateInit2((z_stream *)strm, windowBits);
     return cb->inflateInitCB(strm);
@@ -231,7 +238,8 @@ int unizip_inflateInit2(unizip_streamp strm, int windowBits) {
 
 // zlib提供的压缩，根据源文件和输出文件首地址及长度完成操作
 int unizip_compress2(Bytef *dest, uLongf *destLen, const Bytef *source,
-                     uLong sourceLen, int level) {
+                     uLong sourceLen, int level)
+{
     if (value == CASE_ZLIB)
         return compress2(dest, destLen, source, sourceLen, level);
     return cb->compressCB(dest, destLen, source, sourceLen);
@@ -239,40 +247,47 @@ int unizip_compress2(Bytef *dest, uLongf *destLen, const Bytef *source,
 
 // zlib提供的解压，根据源文件和输出文件首地址及长度完成操作
 int unizip_uncompress2(Bytef *dest, uLongf *destLen, const Bytef *source,
-                       uLong *sourceLen) {
+                       uLong *sourceLen)
+{
     if (value == CASE_ZLIB)
         return uncompress2(dest, destLen, source, sourceLen);
     return cb->uncompressCB(dest, destLen, source, sourceLen);
 }
 
 // zlib提供的对属性压缩，根据压缩器属性完成操作
-int unizip_deflateParams(unizip_streamp strm, int level, int strategy) {
+int unizip_deflateParams(unizip_streamp strm, int level, int strategy)
+{
     return deflateParams((z_stream *)strm, level, strategy);
 }
 
 // zlib提供的对压缩器设置字典
 int unizip_deflateSetDictionary(unizip_streamp strm, const Bytef *dictionary,
-                                uInt dictLength) {
+                                uInt dictLength)
+{
     return deflateSetDictionary((z_stream *)strm, dictionary, dictLength);
 }
 
 // zlib提供的填充字
-int unizip_deflatePending(unizip_streamp strm, unsigned *pending, int *bits) {
+int unizip_deflatePending(unizip_streamp strm, unsigned *pending, int *bits)
+{
     return deflatePending((z_stream *)strm, pending, bits);
 }
 
 // zlib提供的设置头部
-int unizip_deflateSetHeader(unizip_streamp strm, gz_headerp head) {
+int unizip_deflateSetHeader(unizip_streamp strm, gz_headerp head)
+{
     return deflateSetHeader((z_stream *)strm, head);
 }
 
 // zlib提供的对解压器设置字典
 int unizip_inflateSetDictionary(unizip_streamp strm, const Bytef *dictionary,
-                                uInt dictLength) {
+                                uInt dictLength)
+{
     return inflateSetDictionary((z_stream *)strm, dictionary, dictLength);
 }
 
 // zlib提供的获取头部
-int unizip_inflateGetHeader(unizip_streamp strm, gz_headerp head) {
+int unizip_inflateGetHeader(unizip_streamp strm, gz_headerp head)
+{
     return inflateGetHeader((z_stream *)strm, head);
 }

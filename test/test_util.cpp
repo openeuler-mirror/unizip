@@ -5,7 +5,7 @@
  *
  * Authors:
  * chen-yufan <1109674186@qq.com>
- *
+ * shen-yi <1847401037@qq.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -105,6 +105,7 @@ void test_DeflateSeg(int dataLen, char *inputData)
     c_stream.next_in = (unsigned char *)inputData;
     c_stream.next_out = compr;
     uLong len = dataLen * 1024;
+    uLong boundLen = unizip_compressBound(len);
     int err;
     // 压缩数据
     while (c_stream.total_in < len && c_stream.total_out < comprLen) {
@@ -121,6 +122,8 @@ void test_DeflateSeg(int dataLen, char *inputData)
         ASSERT_EQ(err, Z_OK) << "deflate failed";
     }
     comprLen = c_stream.total_out;
+    ASSERT_GE(boundLen, comprLen) << "compressBound wrong";
+
     unizip_deflateEnd(&c_stream);
     inputData[len] = '\0';
     strcpy((char *)uncompr, "garbage");
@@ -146,6 +149,7 @@ void test_DeflateAll(const util_func *uf, int dataLen, char *inputData)
         }
     }
     uLong len = dataLen * 1024;
+    uLong boundLen = unizip_compressBound(len);
     int err;
     c_stream.next_in = (unsigned char *)inputData;
     c_stream.next_out = compr;
@@ -154,9 +158,10 @@ void test_DeflateAll(const util_func *uf, int dataLen, char *inputData)
     unizip_deflate(&c_stream, Z_NO_FLUSH);
     unizip_deflate(&c_stream, Z_FINISH);
     ulong total_out = c_stream.total_out;
+    ASSERT_GE(boundLen, total_out) << "compressBound wrong";
     compr[total_out] = '\0';
     unizip_deflateEnd(&c_stream);
-    //对比原压缩库的压缩函数
+    // 对比原压缩库的压缩函数
     uf->Deflate_fun(inputData, (char *)comprCmp, len, comprLen);
     EXPECT_STREQ(reinterpret_cast<char *>(compr),
                  reinterpret_cast<char *>(comprCmp))
@@ -222,8 +227,10 @@ void test_InflateSeg(int dataLen, char *inputData)
     EXPECT_EQ(err, Z_OK) << "compress failed";
     d_stream.next_in = compr;
     d_stream.next_out = uncompr;
-    while (d_stream.total_out < uncomprLen && d_stream.total_in < comprLen) {
-        d_stream.avail_in = 1;
+    while (d_stream.total_out < uncomprLen && d_stream.total_in <= comprLen) {
+        if (d_stream.total_in < comprLen) {
+            d_stream.avail_in = 1;
+        }
         d_stream.avail_out = 1;
         err = unizip_inflate(&d_stream, Z_NO_FLUSH);
         if (err == Z_STREAM_END)
@@ -257,7 +264,6 @@ void test_InflateAll(const util_func *uf, int dataLen, char *inputData)
     err = unizip_compress(compr, &comprLen,
                           reinterpret_cast<Bytef *>(inputData), len);
     EXPECT_EQ(err, Z_OK) << "compress failed";
-
     d_stream.next_in = compr;
     d_stream.next_out = uncompr;
     d_stream.avail_in = comprLen;
