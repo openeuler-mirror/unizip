@@ -27,30 +27,30 @@
 #include "unizip_adapt.h"
 
 TEST(Zlib_testcases, testVersion) {
-    set_value(1);
+    SetValue(1);
     test_version();
 }
 TEST(Zlib_testcases, testDeflateInitEnd) {
-    set_value(1);
+    SetValue(1);
     test_DeflateInitEnd();
 }
 TEST(Zlib_testcases, testDeflateSeg) {
-    set_value(1);
+    SetValue(1);
     test_DeflateSeg(1, nullptr);
 }
 TEST(Zlib_testcases, testDeflateCopyReset) {
-    set_value(1);
+    SetValue(1);
     test_DeflateCopyReset();
 }
 TEST(Zlib_testcases, testInflateInitEnd) {
-    set_value(1);
+    SetValue(1);
     test_InflateInitEnd();
 }
 TEST(Zlib_testcases, testInflateSeg) {
-    set_value(1);
+    SetValue(1);
     test_InflateSeg(2, nullptr);
 }
 TEST(Zlib_testcases, testInflateCopyReset) {
-    set_value(1);
+    SetValue(1);
     test_InflateCopyReset();
 }
