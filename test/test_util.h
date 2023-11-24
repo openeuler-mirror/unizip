@@ -47,6 +47,7 @@ struct util_func {
     Deflate_func *Deflate_fun;
     Inflate_func *Inflate_fun;
 };
+void uadk_changeLib(int compression_flag);
 void test_version(void);
 void test_DeflateInitEnd(void);
 void test_DeflateSeg(int dataLen, char *inputData);

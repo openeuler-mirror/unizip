@@ -31,14 +31,6 @@
 #include <unistd.h>
 #include <zlib.h>
 
-std::string getParentDirectory(const std::string &path)
-{
-    size_t found = path.find_last_of("/\\");
-    if (found != std::string::npos) {
-        return path.substr(0, found);
-    }
-    return ""; // Return empty string if no parent directory found
-}
 unizip_stream c_stream;
 unizip_stream d_stream;
 uLong uncomprLen = 1048576;
@@ -68,6 +60,12 @@ void TearDown()
     memset(uncompr, 0, static_cast<uInt>(uncomprLen));
     /* unizip_deflateEnd(&c_stream);
     unizip_inflateEnd(&d_stream); */
+}
+
+void uadk_changeLib(int compression_flag)
+{
+    c_stream.compression_flag=compression_flag;
+    d_stream.compression_flag=compression_flag;
 }
 
 void test_version(void)

@@ -20,8 +20,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  ********************************************************************************/
-#ifndef SRC_UNIZIP_ADAPT_H_
-#define SRC_UNIZIP_ADAPT_H_
+#ifndef SRC_UNIZIP_ADAPT_H
+#define SRC_UNIZIP_ADAPT_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,7 +33,7 @@
 extern "C" {
 #endif
 
-void set_value(int v);
+void SetValue(int v);
 
 // 获取软件包版本号
 const char *unizip_Version(void);
@@ -47,13 +47,13 @@ int unizip_inflateInit(unizip_streamp strm);
 // 压缩结束
 int unizip_deflateEnd(unizip_streamp strm);
 
-//解压结束
+// 解压结束
 int unizip_inflateEnd(unizip_streamp strm);
 
-//压缩函数，根据压缩器的属性进行压缩
+// 压缩函数，根据压缩器的属性进行压缩
 int unizip_deflate(unizip_streamp strm, int flush);
 
-//解压函数，根据解压器的属性进行解压
+// 解压函数，根据解压器的属性进行解压
 int unizip_inflate(unizip_streamp strm, int flush);
 
 // Common API 其他软件包在下层需要做好适配
@@ -125,4 +125,4 @@ int unizip_inflateGetHeader(unizip_streamp strm, gz_headerp head);
 }
 #endif
 
-#endif // SRC_UNIZIP_ADAPT_H_
+#endif // SRC_UNIZIP_ADAPT_H

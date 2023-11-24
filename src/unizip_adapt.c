@@ -26,12 +26,13 @@
 
 callback_t *cb = NULL;
 int value = 2;
-void set_value(int v) { value = v; }
+void SetValue(int v) { value = v; }
 int get_algorithm(void)
 {
     char *lib_value = getenv("LIB_VALUE");
-    if (lib_value != NULL)
+    if (lib_value != NULL) {
         value = atoi(lib_value);
+    }
     if (cb == NULL) {
         if ((cb = (callback_t *)malloc(sizeof(callback_t))) == NULL) {
             return -1;
@@ -89,7 +90,7 @@ int unizip_deflateInit(unizip_streamp strm, int level)
         return UNIZIP_ALGO_ERROR;
     }
     return cb->deflateInitCB(strm, level);
-    //用原版函数，强制类型转换即可
+    // 用原版函数，强制类型转换即可
 }
 
 // 解压器初始化
@@ -110,7 +111,7 @@ int unizip_deflateEnd(unizip_streamp strm)
     return cb->deflateEndCB(strm);
 }
 
-//解压结束
+// 解压结束
 int unizip_inflateEnd(unizip_streamp strm)
 {
     if (get_algorithm() == UNIZIP_ALGO_ERROR) {
@@ -119,7 +120,7 @@ int unizip_inflateEnd(unizip_streamp strm)
     return cb->inflateEndCB(strm);
 }
 
-//压缩函数，根据压缩器的属性进行压缩
+// 压缩函数，根据压缩器的属性进行压缩
 int unizip_deflate(unizip_streamp strm, int flush)
 {
     if (get_algorithm() == UNIZIP_ALGO_ERROR) {
@@ -128,7 +129,7 @@ int unizip_deflate(unizip_streamp strm, int flush)
     return cb->deflateCB(strm, flush);
 }
 
-//解压函数，根据解压器的属性进行解压
+// 解压函数，根据解压器的属性进行解压
 int unizip_inflate(unizip_streamp strm, int flush)
 {
     if (get_algorithm() == UNIZIP_ALGO_ERROR) {
@@ -222,17 +223,19 @@ uLong unizip_compressBound(uLong sourceLen)
 int unizip_deflateInit2(unizip_streamp strm, int level, int method,
                         int windowBits, int memLevel, int strategy)
 {
-    if (value == CASE_ZLIB)
+    if (value == CASE_ZLIB) {
         return deflateInit2((z_stream *)strm, level, method, windowBits,
                             memLevel, strategy);
+    }
     return cb->inflateInitCB(strm, level);
 }
 
 // zlib提供的解压器初始化
 int unizip_inflateInit2(unizip_streamp strm, int windowBits)
 {
-    if (value == CASE_ZLIB)
+    if (value == CASE_ZLIB) {
         return inflateInit2((z_stream *)strm, windowBits);
+    }
     return cb->inflateInitCB(strm);
 }
 
@@ -240,8 +243,9 @@ int unizip_inflateInit2(unizip_streamp strm, int windowBits)
 int unizip_compress2(Bytef *dest, uLongf *destLen, const Bytef *source,
                      uLong sourceLen, int level)
 {
-    if (value == CASE_ZLIB)
+    if (value == CASE_ZLIB) {
         return compress2(dest, destLen, source, sourceLen, level);
+    }
     return cb->compressCB(dest, destLen, source, sourceLen);
 }
 
@@ -249,8 +253,9 @@ int unizip_compress2(Bytef *dest, uLongf *destLen, const Bytef *source,
 int unizip_uncompress2(Bytef *dest, uLongf *destLen, const Bytef *source,
                        uLong *sourceLen)
 {
-    if (value == CASE_ZLIB)
+    if (value == CASE_ZLIB) {
         return uncompress2(dest, destLen, source, sourceLen);
+    }
     return cb->uncompressCB(dest, destLen, source, sourceLen);
 }
 

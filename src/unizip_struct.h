@@ -56,7 +56,7 @@ typedef struct unizip_stream_s {
     uLong adler;    /* Adler-32 or CRC-32 value of the uncompressed data */
     uLong reserved; /* reserved for future use */
 
-    //新增属性
+    // 新增属性
     int compression_flag; // unused
 
     void *ud; // 下层压缩库所需的数据结构将存储在这里
