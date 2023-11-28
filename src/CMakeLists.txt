@@ -22,7 +22,7 @@
 
 set(check_zlib_libs
     ${LIBZLIB_LIBRARY}
-    ${LIBWD_LIBRARY}
+    #${LIBWD_LIBRARY}
     )
 
 list(REMOVE_DUPLICATES check_zlib_libs)
@@ -40,6 +40,7 @@ if (ENABLE_LIBUNIZIP)
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${CMAKE_BINARY_DIR}/conf
         ${check_incs}
+        ${CMAKE_CURRENT_SOURCE_DIR}/zlib
     )
 
     # set libunizip include dirs

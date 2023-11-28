@@ -104,7 +104,7 @@ if(ENABLE_UT)
     find_program(MEMORYCHECK_COMMAND NAMES valgrind)
     set(MEMORYCHECK_COMMAND_OPTIONS "--trace-children=yes --leak-check=full")
     enable_testing()
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tests)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/test)
 endif()
 
 # install all files
