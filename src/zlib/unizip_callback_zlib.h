@@ -20,8 +20,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  ********************************************************************************/
-#ifndef SRC_ZLIB_UNIZIP_CALLBACK_ZLIB_H
-#define SRC_ZLIB_UNIZIP_CALLBACK_ZLIB_H
+#ifndef SRC_ZLIB_UNIZIP_CALLBACK_ZLIB_H_
+#define SRC_ZLIB_UNIZIP_CALLBACK_ZLIB_H_
 #include "unizip_struct.h"
 
 #ifdef __cplusplus
@@ -50,18 +50,36 @@ int deflateResetCB_zlib(unizip_streamp strm);
 
 int inflateResetCB_zlib(unizip_streamp strm);
 
-int compressCB_zlib(Bytef *dest, uLongf *destLen, const Bytef *source,
-                    uLong sourceLen);
+int compressCB_zlib(Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen);
 
-int uncompressCB_zlib(Bytef *dest, uLongf *destLen, const Bytef *source,
-                      uLong sourceLen);
+int uncompressCB_zlib(Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen);
 
 uLong compressBound_zlib(uLong sourceLen);
 
 void zlib_init(callback_t *cb_zlib);
 
+int deflateInit2_zlib(unizip_streamp strm, int level, int method, int windowBits, int memLevel, int strategy);
+
+int inflateInit2_zlib(unizip_streamp strm, int windowBits);
+
+int compress2_zlib(Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen, int level);
+
+int uncompress2_zlib(Bytef *dest, uLongf *destLen, const Bytef *source, uLong *sourceLen);
+
+int deflateParams_zlib(unizip_streamp strm, int level, int strategy);
+
+int deflateSetDictionary_zlib(unizip_streamp strm, const Bytef *dictionary, uInt dictLength);
+
+int deflatePending_zlib(unizip_streamp strm, unsigned *pending, int *bits);
+
+int deflateSetHeader_zlib(unizip_streamp strm, gz_headerp head);
+
+int inflateSetDictionary_zlib(unizip_streamp strm, const Bytef *dictionary, uInt dictLength);
+
+int inflateGetHeader_zlib(unizip_streamp strm, gz_headerp head);
+
 #ifdef __cplusplus
 }
 #endif
 
-#endif
+#endif // SRC_ZLIB_UNIZIP_CALLBACK_ZLIB_H_

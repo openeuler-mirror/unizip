@@ -79,6 +79,16 @@ typedef struct callback {
     int (*compressCB)();
     int (*uncompressCB)();
     uLong (*compressBoundCB)();
+    int (*deflateInit2CB)();
+    int (*inflateInit2CB)();
+    int (*compress2CB)();
+    int (*uncompress2CB)();
+    int (*deflateParamsCB)();
+    int (*deflateSetDictionaryCB)();
+    int (*deflatePendingCB)();
+    int (*deflateSetHeaderCB)();
+    int (*inflateSetDictionaryCB)();
+    int (*inflateGetHeaderCB)();
 } callback_t;
 
 #endif // SRC_UNIZIP_STRUCT_H_

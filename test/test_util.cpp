@@ -25,28 +25,24 @@
 #include <cstring>
 #include <ctime>
 #include <fstream>
-#include <gtest/gtest.h>
 #include <random>
 #include <string>
+#include <gtest/gtest.h>
 #include <unistd.h>
-#include <zlib.h>
 
 unizip_stream c_stream;
 unizip_stream d_stream;
 uLong uncomprLen = 1048576;
 uLong comprLen = 1048576;
 Byte *compr = reinterpret_cast<Byte *>(calloc(static_cast<uInt>(comprLen), 1));
-Byte *comprCmp =
-    reinterpret_cast<Byte *>(calloc(static_cast<uInt>(comprLen), 1));
-Byte *uncompr =
-    reinterpret_cast<Byte *>(calloc(static_cast<uInt>(uncomprLen), 1));
-Byte *uncomprCmp =
-    reinterpret_cast<Byte *>(calloc(static_cast<uInt>(uncomprLen), 1));
+Byte *comprCmp = reinterpret_cast<Byte *>(calloc(static_cast<uInt>(comprLen), 1));
+Byte *uncompr = reinterpret_cast<Byte *>(calloc(static_cast<uInt>(uncomprLen), 1));
+Byte *uncomprCmp = reinterpret_cast<Byte *>(calloc(static_cast<uInt>(uncomprLen), 1));
 const int bufferSize = 1048576; // 1MB，根据需要调整大小
 
-void SetUp()
+void SetUp(int level)
 {
-    unizip_deflateInit(&c_stream, Z_DEFAULT_COMPRESSION);
+    unizip_deflateInit(&c_stream, level);
     unizip_inflateInit(&d_stream);
     uncomprLen = 1048576;
     comprLen = 1048576;
@@ -58,24 +54,23 @@ void TearDown()
     // 可以在这里添加必要的清理代码
     memset(compr, 0, static_cast<uInt>(comprLen));
     memset(uncompr, 0, static_cast<uInt>(uncomprLen));
+    memset(comprCmp, 0, static_cast<uInt>(comprLen));
+    memset(uncomprCmp, 0, static_cast<uInt>(uncomprLen));
     /* unizip_deflateEnd(&c_stream);
     unizip_inflateEnd(&d_stream); */
 }
 
 void uadk_changeLib(int compression_flag)
 {
-    c_stream.compression_flag=compression_flag;
-    d_stream.compression_flag=compression_flag;
+    c_stream.compression_flag = compression_flag;
+    d_stream.compression_flag = compression_flag;
 }
 
-void test_version(void)
-{
-    EXPECT_STRNE(unizip_Version(), NULL) << "wrong version";
-}
+void test_version(void) { EXPECT_STRNE(unizip_Version(), NULL) << "wrong version"; }
 
 void test_DeflateInitEnd(void)
 {
-    SetUp();
+    SetUp(Z_DEFAULT_COMPRESSION);
     static unizip_stream temp_stream;
     temp_stream.zalloc = (alloc_func)0;
     temp_stream.zfree = (free_func)0;
@@ -87,14 +82,13 @@ void test_DeflateInitEnd(void)
     TearDown();
 }
 
-void test_DeflateSeg(int dataLen, char *inputData)
+void test_DeflateSeg(const util_func *uf, int dataLen, char *inputData)
 {
-    SetUp();
+    SetUp(Z_DEFAULT_COMPRESSION);
     if (inputData == nullptr) {
         inputData = new char[dataLen * 1024]; // 为dataLen千字节分配内存
         // 生成随机数据
-        std::default_random_engine generator(
-            static_cast<unsigned>(time(nullptr)));
+        std::default_random_engine generator(static_cast<unsigned>(time(nullptr)));
         std::uniform_int_distribution<int> distribution(0, 255);
         for (int i = 0; i < dataLen * 1024; i++) {
             inputData[i] = static_cast<char>(distribution(generator));
@@ -119,28 +113,28 @@ void test_DeflateSeg(int dataLen, char *inputData)
             break;
         ASSERT_EQ(err, Z_OK) << "deflate failed";
     }
-    comprLen = c_stream.total_out;
-    ASSERT_GE(boundLen, comprLen) << "compressBound wrong";
+    ulong totalOut = c_stream.total_out;
+    ASSERT_GE(boundLen, totalOut) << "compressBound wrong";
+
+    uf->Deflate_fun(inputData, (char *)comprCmp, len, comprLen);
+    EXPECT_STREQ(reinterpret_cast<char *>(compr), reinterpret_cast<char *>(comprCmp)) << "VerifyData mismatch";
 
     unizip_deflateEnd(&c_stream);
     inputData[len] = '\0';
     strcpy((char *)uncompr, "garbage");
-    err = unizip_uncompress(uncompr, &uncomprLen, compr, comprLen);
+    err = unizip_uncompress(uncompr, &uncomprLen, compr, totalOut);
     uncompr[uncomprLen] = '\0';
-    EXPECT_STREQ(reinterpret_cast<char *>(inputData),
-                 reinterpret_cast<char *>(uncompr))
-        << "Data mismatch";
+    EXPECT_STREQ(reinterpret_cast<char *>(inputData), reinterpret_cast<char *>(uncompr)) << "Data mismatch";
     TearDown();
 }
 
 void test_DeflateAll(const util_func *uf, int dataLen, char *inputData)
 {
-    SetUp();
+    SetUp(Z_DEFAULT_COMPRESSION);
     if (inputData == nullptr) {
         inputData = new char[dataLen * 1024]; // 为dataLen千字节分配内存
         // 生成随机数据
-        std::default_random_engine generator(
-            static_cast<unsigned>(time(nullptr)));
+        std::default_random_engine generator(static_cast<unsigned>(time(nullptr)));
         std::uniform_int_distribution<int> distribution(0, 255);
         for (int i = 0; i < dataLen * 1024; i++) {
             inputData[i] = static_cast<char>(distribution(generator));
@@ -161,27 +155,24 @@ void test_DeflateAll(const util_func *uf, int dataLen, char *inputData)
     unizip_deflateEnd(&c_stream);
     // 对比原压缩库的压缩函数
     uf->Deflate_fun(inputData, (char *)comprCmp, len, comprLen);
-    EXPECT_STREQ(reinterpret_cast<char *>(compr),
-                 reinterpret_cast<char *>(comprCmp))
-        << "VerifyData mismatch";
-    free(comprCmp);
+    EXPECT_STREQ(reinterpret_cast<char *>(compr), reinterpret_cast<char *>(comprCmp)) << "VerifyData mismatch";
+    // free(comprCmp);
     strcpy((char *)uncompr, "garbage");
     comprLen = total_out;
     unizip_uncompress(uncompr, &uncomprLen, compr, comprLen);
     uncompr[uncomprLen] = '\0';
-    EXPECT_STREQ(reinterpret_cast<char *>(inputData),
-                 reinterpret_cast<char *>(uncompr))
-        << "Data mismatch";
+    EXPECT_STREQ(reinterpret_cast<char *>(inputData), reinterpret_cast<char *>(uncompr)) << "Data mismatch";
     TearDown();
 }
 
 void test_DeflateCopyReset()
 {
-    SetUp();
+    SetUp(Z_DEFAULT_COMPRESSION);
     unizip_stream wstream_copy;
     wstream_copy.zalloc = (alloc_func)0;
     wstream_copy.zfree = (free_func)0;
     wstream_copy.opaque = (voidpf)0;
+    wstream_copy.compression_flag = 0;
     int err = unizip_deflateInit(&wstream_copy, Z_DEFAULT_COMPRESSION);
     EXPECT_EQ(err, Z_OK) << "deflateInit failed";
     err = unizip_deflateCopy(&wstream_copy, &c_stream);
@@ -193,7 +184,7 @@ void test_DeflateCopyReset()
 
 void test_InflateInitEnd(void)
 {
-    SetUp();
+    SetUp(Z_DEFAULT_COMPRESSION);
     static unizip_stream temp_stream;
     temp_stream.zalloc = (alloc_func)0;
     temp_stream.zfree = (free_func)0;
@@ -205,23 +196,21 @@ void test_InflateInitEnd(void)
     TearDown();
 }
 
-void test_InflateSeg(int dataLen, char *inputData)
+void test_InflateSeg(const util_func *uf,int dataLen, char *inputData)
 {
-    SetUp();
+    SetUp(Z_DEFAULT_COMPRESSION);
     int err;
     if (inputData == nullptr) {
         inputData = new char[dataLen * 1024]; // 为dataLen千字节分配内存
         // 生成随机数据
-        std::default_random_engine generator(
-            static_cast<unsigned>(time(nullptr)));
+        std::default_random_engine generator(static_cast<unsigned>(time(nullptr)));
         std::uniform_int_distribution<int> distribution(0, 255);
         for (int i = 0; i < dataLen * 1024; i++) {
             inputData[i] = static_cast<char>(distribution(generator));
         }
     }
     uLong len = dataLen * 1024;
-    err = unizip_compress(compr, &comprLen,
-                          reinterpret_cast<Bytef *>(inputData), len);
+    err = unizip_compress(compr, &comprLen, reinterpret_cast<Bytef *>(inputData), len);
     EXPECT_EQ(err, Z_OK) << "compress failed";
     d_stream.next_in = compr;
     d_stream.next_out = uncompr;
@@ -237,21 +226,21 @@ void test_InflateSeg(int dataLen, char *inputData)
     }
     unizip_inflateEnd(&d_stream);
     inputData[len] = '\0';
-    EXPECT_STREQ(reinterpret_cast<char *>(inputData),
-                 reinterpret_cast<char *>(uncompr))
-        << "Data mismatch";
+    uf->Inflate_fun((char *)compr, (char *)uncomprCmp, comprLen, uncomprLen);
+    EXPECT_STREQ(reinterpret_cast<char *>(uncompr), reinterpret_cast<char *>(uncomprCmp)) << "VerifyData mismatch";
+
+    EXPECT_STREQ(reinterpret_cast<char *>(inputData), reinterpret_cast<char *>(uncompr)) << "Data mismatch";
     TearDown();
 }
 
 void test_InflateAll(const util_func *uf, int dataLen, char *inputData)
 {
-    SetUp();
+    SetUp(Z_DEFAULT_COMPRESSION);
     int err;
     if (inputData == nullptr) {
         inputData = new char[dataLen * 1024 + 1]; // 为dataLen千字节分配内存
         // 生成随机数据
-        std::default_random_engine generator(
-            static_cast<unsigned>(time(nullptr)));
+        std::default_random_engine generator(static_cast<unsigned>(time(nullptr)));
         std::uniform_int_distribution<int> distribution(0, 255);
         for (int i = 0; i < dataLen * 1024; i++) {
             inputData[i] = static_cast<char>(distribution(generator));
@@ -259,8 +248,7 @@ void test_InflateAll(const util_func *uf, int dataLen, char *inputData)
         }
     }
     uLong len = dataLen * 1024;
-    err = unizip_compress(compr, &comprLen,
-                          reinterpret_cast<Bytef *>(inputData), len);
+    err = unizip_compress(compr, &comprLen, reinterpret_cast<Bytef *>(inputData), len);
     EXPECT_EQ(err, Z_OK) << "compress failed";
     d_stream.next_in = compr;
     d_stream.next_out = uncompr;
@@ -271,27 +259,22 @@ void test_InflateAll(const util_func *uf, int dataLen, char *inputData)
     unizip_inflateEnd(&d_stream);
     uncompr[uncomprLen] = '\0';
     //对比原压缩库的解压函数
-    uncomprCmp = (Byte *)calloc(static_cast<uInt>(uncomprLen), 1);
     uf->Inflate_fun((char *)compr, (char *)uncomprCmp, comprLen, uncomprLen);
-    EXPECT_STREQ(reinterpret_cast<char *>(uncompr),
-                 reinterpret_cast<char *>(uncomprCmp))
-        << "VerifyData mismatch";
-    free(uncomprCmp);
+    EXPECT_STREQ(reinterpret_cast<char *>(uncompr), reinterpret_cast<char *>(uncomprCmp)) << "VerifyData mismatch";
 
     inputData[len] = '\0';
-    EXPECT_STREQ(reinterpret_cast<char *>(inputData),
-                 reinterpret_cast<char *>(uncompr))
-        << "Data mismatch";
+    EXPECT_STREQ(reinterpret_cast<char *>(inputData), reinterpret_cast<char *>(uncompr)) << "Data mismatch";
     TearDown();
 }
 
 void test_InflateCopyReset(void)
 {
-    SetUp();
+    SetUp(Z_DEFAULT_COMPRESSION);
     unizip_stream wstream_copy;
     wstream_copy.zalloc = (alloc_func)0;
     wstream_copy.zfree = (free_func)0;
     wstream_copy.opaque = (voidpf)0;
+    wstream_copy.compression_flag = 0;
     int err = unizip_inflateInit(&wstream_copy);
     EXPECT_EQ(err, Z_OK) << "deflateInit failed";
     err = unizip_inflateCopy(&wstream_copy, &d_stream);

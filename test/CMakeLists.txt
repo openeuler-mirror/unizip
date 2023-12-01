@@ -11,53 +11,41 @@ find_package(Zstd REQUIRED)
 find_package(Snappy REQUIRED)
 find_package(Brotli REQUIRED)
 find_package(LZ4 REQUIRED)
+# uadk
 # find_library(LIBWD_LIBRARY wd
 # 	HINTS ${PC_LIBWD_LIBDIR} ${PC_LIBWD_LIBRARY_DIRS})
 # _CHECK(LIBWD_LIBRARY "LIBWD_LIBRARY-NOTFOUND" "libwd.so")
 
-
-
-
-
-set( TESTS_UTILS_SRCS
-    ${CMAKE_SOURCE_DIR}/src/unizip_struct.h
-    ${CMAKE_SOURCE_DIR}/src/unizip_adapt.h
-    ${CMAKE_SOURCE_DIR}/src/unizip_adapt.c
-    ${CMAKE_SOURCE_DIR}/src/zlib/unizip_callback_zlib.h
-    ${CMAKE_SOURCE_DIR}/src/zlib/unizip_callback_zlib.c
-    ${CMAKE_SOURCE_DIR}/test/test_util.h
-    ${CMAKE_SOURCE_DIR}/test/test_util.cpp
-)
-
 macro(_DEFINE_NEW_TEST)
     add_executable(${ARGV0}
-        ${TESTS_UTILS_SRCS}
         main.cpp
         ${ARGV0}.cpp
+        test_util.cpp
         )
 
     target_link_libraries(${ARGV0}
         ${GTEST_LIBRARY}
+        ${CMAKE_CURRENT_SOURCE_DIR}/../build/src/libunizip.so
         pthread
-        ${LIBLZMA_LIBRARIES} 
-        ${GTEST_BOTH_LIBRARIES} 
-        ${ZLIB_LIBRARIES} 
-        ${BZIP2_LIBRARIES} 
-        ${SNAPPY_LIBRARIES} 
-        #${LIBWD_LIBRARY}  #uadk
-        libzstd.so 
-        ${LZ4_LIBRARIES}
-        ${BROTLI_LIBRARIES}
-        snappy
         gpg-error
         gmp
+        z lz4 brotlidec brotlicommon brotlienc snappy bz2 lzma zstd 7lzma
         )
 
     target_include_directories(${ARGV0} PUBLIC
         ${GTEST_INCLUDE_DIR}
         PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
         PUBLIC ${CMAKE_SOURCE_DIR}/src
+        PUBLIC ${CMAKE_SOURCE_DIR}/src/xz
+        PUBLIC ${CMAKE_SOURCE_DIR}/src/snappy
+        PUBLIC ${CMAKE_SOURCE_DIR}/src/gzip
+        PUBLIC ${CMAKE_SOURCE_DIR}/src/bzip2
         PUBLIC ${CMAKE_SOURCE_DIR}/src/zlib
+        PUBLIC ${CMAKE_SOURCE_DIR}/src/zstd
+        PUBLIC ${CMAKE_SOURCE_DIR}/src/7zip
+        PUBLIC ${CMAKE_SOURCE_DIR}/src/brotli
+        PUBLIC ${CMAKE_SOURCE_DIR}/src/lz4
+        PUBLIC ${CMAKE_SOURCE_DIR}/src/uadk
         /usr/local/include/uadk
         )
         
@@ -77,32 +65,46 @@ if (ENABLE_FUZZ)
 endif()
 
 #   api testcase
- _DEFINE_NEW_TEST(zlib_util Zlib_testcases)
+_DEFINE_NEW_TEST(zlib_util Zlib_testcases)
+_DEFINE_NEW_TEST(bzip2_util bzip2_testcases)
+_DEFINE_NEW_TEST(zstd_util zstd_testcases)
+_DEFINE_NEW_TEST(xz_util Xz_testcases)
+_DEFINE_NEW_TEST(snappy_util snappy_testcases)
+_DEFINE_NEW_TEST(lz4_util Lz4_testcases)
+_DEFINE_NEW_TEST(brotli_util Brotli_testcases)
+_DEFINE_NEW_TEST(7zip_util 7zip_testcases)
+_DEFINE_NEW_TEST(uadk_util uadk_testcases)
 
 # mock test for run lcov to generate html
-add_executable(mock_ut ${TESTS_UTILS_SRCS} main.cpp)
+add_executable(mock_ut main.cpp)
 target_include_directories(mock_ut PUBLIC
     ${GTEST_INCLUDE_DIR}
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
     PUBLIC ${CMAKE_SOURCE_DIR}/src
+    PUBLIC ${CMAKE_SOURCE_DIR}/src/xz
+    PUBLIC ${CMAKE_SOURCE_DIR}/src/snappy
+    PUBLIC ${CMAKE_SOURCE_DIR}/src/gzip
+    PUBLIC ${CMAKE_SOURCE_DIR}/src/bzip2
     PUBLIC ${CMAKE_SOURCE_DIR}/src/zlib
+    PUBLIC ${CMAKE_SOURCE_DIR}/src/zstd
+    PUBLIC ${CMAKE_SOURCE_DIR}/src/7zip
+    PUBLIC ${CMAKE_SOURCE_DIR}/src/brotli
+    PUBLIC ${CMAKE_SOURCE_DIR}/src/lz4
+    PUBLIC ${CMAKE_SOURCE_DIR}/src/uadk #uadk
     /usr/local/include/uadk
     )
-target_link_libraries(mock_ut
-    ${GTEST_LIBRARY}
-    ${LIBLZMA_LIBRARIES} 
-    ${GTEST_BOTH_LIBRARIES} 
-    ${ZLIB_LIBRARIES} 
-    ${BZIP2_LIBRARIES} 
-    ${SNAPPY_LIBRARIES} 
-    ${LIBWD_LIBRARY}
-    ${LZ4_LIBRARIES}
-    libzstd.so 
-    snappy
+target_link_libraries(mock_ut ${GTEST_LIBRARY}
     pthread
-    ${BROTLI_LIBRARIES}
     )
-add_dependencies(mock_ut zlib_util)
+add_dependencies(mock_ut
+                zlib_util
+                bzip2_util
+                zstd_util
+                xz_util
+                snappy_util
+                lz4_util
+                uadk_util
+                brotli_util)
 
 IF(ENABLE_GCOV)
     add_custom_target(coverage

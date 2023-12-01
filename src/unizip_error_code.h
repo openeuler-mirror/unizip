@@ -35,6 +35,5 @@
 
 #define UNIZIP_ALGO_ERROR (-7)
 
-#define ERR_CODE(format, args...) \
-    fprintf(stderr, format, ##args)
+#define ERR_CODE(format, args...) fprintf(stderr, format, ##args)
 #endif // SRC_UNIZIP_ERROR_CODE_H_

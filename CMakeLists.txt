@@ -35,6 +35,11 @@ endif()
 
 option(ENABLE_UT "enable ut" ON)
 
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Debug)
+endif()
+
+
 include(cmake/options.cmake)
 
 include(cmake/set_build_flags.cmake)
@@ -42,7 +47,13 @@ include(cmake/set_build_flags.cmake)
 if (LIB_INSTALL_DIR)
   set(LIB_INSTALL_DIR_DEFAULT ${LIB_INSTALL_DIR})
 else()
-  set(LIB_INSTALL_DIR_DEFAULT "lib")
+  set(LIB_INSTALL_DIR_DEFAULT "/usr/lib64")
+endif()
+
+if (INC_INSTALL_DIR)
+  set(INC_INSTALL_DIR_DEFAULT ${INC_INSTALL_DIR})
+else()
+  set(INC_INSTALL_DIR_DEFAULT "include")
 endif()
 
 # check depends libs and headers
