@@ -20,19 +20,45 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  ********************************************************************************/
-#ifndef SRC_UNIZIP_ADAPT_H
-#define SRC_UNIZIP_ADAPT_H
-
-#include <stdio.h>
-#include <stdlib.h>
-
-#include "unizip_callback_zlib.h"
+#ifndef SRC_UNIZIP_ADAPT_H_
+#define SRC_UNIZIP_ADAPT_H_
 #include "unizip_struct.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#undef deflateInit
+#undef inflateInit
+#undef deflateInit2
+#undef inflateInit2
+
+#define zlibVersion unizip_Version
+#define deflateInit unizip_deflateInit
+#define inflateInit unizip_inflateInit
+#define deflateEnd unizip_deflateEnd
+#define inflateEnd unizip_inflateEnd
+#define deflate unizip_deflate
+#define inflate unizip_inflate
+#define deflateCopy unizip_deflateCopy
+#define inflateCopy unizip_inflateCopy
+#define zError unizip_zError
+#define deflateReset unizip_deflateReset
+#define inflateReset unizip_inflateReset
+#define compress unizip_compress
+#define uncompress unizip_uncompress
+#define compressBound unizip_compressBound
+#define deflateInit2 unizip_deflateInit2
+#define inflateInit2 unizip_inflateInit2
+#define compress2 unizip_compress2
+#define uncompress2 unizip_uncompress2
+#define deflateParams unizip_deflateParams
+#define deflateSetDictionary unizip_deflateSetDictionary
+#define deflatePending unizip_deflatePending
+#define deflateSetHeader unizip_deflateSetHeader
+#define inflateSetDictionary unizip_inflateSetDictionary
+#define inflateGetHeader unizip_inflateGetHeader
+
+bool UadkEnabled(void);
 void SetValue(int v);
 
 // 获取软件包版本号
@@ -74,12 +100,10 @@ int unizip_deflateReset(unizip_streamp strm);
 int unizip_inflateReset(unizip_streamp strm);
 
 // 压缩，根据源文件和输出文件首地址及长度完成操作
-int unizip_compress(Bytef *dest, uLongf *destLen, const Bytef *source,
-                    uLong sourceLen);
+int unizip_compress(Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen);
 
 // 解压，根据源文件和输出文件首地址及长度完成操作
-int unizip_uncompress(Bytef *dest, uLongf *destLen, const Bytef *source,
-                      uLong sourceLen);
+int unizip_uncompress(Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen);
 
 // 压缩文件长度预估
 uLong unizip_compressBound(uLong sourceLen);
@@ -87,26 +111,22 @@ uLong unizip_compressBound(uLong sourceLen);
 // Unique API for Zlib
 
 // zlib提供的压缩器初始化
-int unizip_deflateInit2(unizip_streamp strm, int level, int method,
-                        int windowBits, int memLevel, int strategy);
+int unizip_deflateInit2(unizip_streamp strm, int level, int method, int windowBits, int memLevel, int strategy);
 
 // zlib提供的解压器初始化
 int unizip_inflateInit2(unizip_streamp strm, int windowBits);
 
 // zlib提供的压缩，根据源文件和输出文件首地址及长度完成操作
-int unizip_compress2(Bytef *dest, uLongf *destLen, const Bytef *source,
-                     uLong sourceLen, int level);
+int unizip_compress2(Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen, int level);
 
 // zlib提供的解压，根据源文件和输出文件首地址及长度完成操作
-int unizip_uncompress2(Bytef *dest, uLongf *destLen, const Bytef *source,
-                       uLong *sourceLen);
+int unizip_uncompress2(Bytef *dest, uLongf *destLen, const Bytef *source, uLong *sourceLen);
 
 // zlib提供的对属性压缩，根据压缩器属性完成操作
 int unizip_deflateParams(unizip_streamp strm, int level, int strategy);
 
 // zlib提供的对压缩器设置字典
-int unizip_deflateSetDictionary(unizip_streamp strm, const Bytef *dictionary,
-                                uInt dictLength);
+int unizip_deflateSetDictionary(unizip_streamp strm, const Bytef *dictionary, uInt dictLength);
 
 // zlib提供的填充字
 int unizip_deflatePending(unizip_streamp strm, unsigned *pending, int *bits);
@@ -115,8 +135,7 @@ int unizip_deflatePending(unizip_streamp strm, unsigned *pending, int *bits);
 int unizip_deflateSetHeader(unizip_streamp strm, gz_headerp head);
 
 // zlib提供的对解压器设置字典
-int unizip_inflateSetDictionary(unizip_streamp strm, const Bytef *dictionary,
-                                uInt dictLength);
+int unizip_inflateSetDictionary(unizip_streamp strm, const Bytef *dictionary, uInt dictLength);
 
 // zlib提供的获取头部
 int unizip_inflateGetHeader(unizip_streamp strm, gz_headerp head);
@@ -125,4 +144,4 @@ int unizip_inflateGetHeader(unizip_streamp strm, gz_headerp head);
 }
 #endif
 
-#endif // SRC_UNIZIP_ADAPT_H
+#endif // SRC_UNIZIP_ADAPT_H_

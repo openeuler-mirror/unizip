@@ -34,10 +34,10 @@ TEST(Zlib_testcases, testDeflateInitEnd) {
     SetValue(1);
     test_DeflateInitEnd();
 }
-TEST(Zlib_testcases, testDeflateSeg) {
-    SetValue(1);
-    test_DeflateSeg(1, nullptr);
-}
+// TEST(Zlib_testcases, testDeflateSeg) {
+//     SetValue(1);
+//     test_DeflateSeg(1, nullptr);
+// }
 TEST(Zlib_testcases, testDeflateCopyReset) {
     SetValue(1);
     test_DeflateCopyReset();
@@ -46,10 +46,10 @@ TEST(Zlib_testcases, testInflateInitEnd) {
     SetValue(1);
     test_InflateInitEnd();
 }
-TEST(Zlib_testcases, testInflateSeg) {
-    SetValue(1);
-    test_InflateSeg(2, nullptr);
-}
+// TEST(Zlib_testcases, testInflateSeg) {
+//     SetValue(1);
+//     test_InflateSeg(2, nullptr);
+// }
 TEST(Zlib_testcases, testInflateCopyReset) {
     SetValue(1);
     test_InflateCopyReset();

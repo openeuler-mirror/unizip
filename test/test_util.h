@@ -24,25 +24,21 @@
 
 #ifndef TEST_TEST_UTIL_H_
 #define TEST_TEST_UTIL_H_
-#include "unizip_adapt.h"
 #include <gtest/gtest.h>
-#include <zlib.h>
+#include "unizip_adapt.h"
 #define MEMEQ(length, a, b) (!memcmp((a), (b), (length)))
 
 // 在gtest中，将原有的FAIL修改为abort();
-#define ASSERT(x)                                                              \
-    do {                                                                       \
-        if (!(x)) {                                                            \
-            fprintf(stderr, "Assert failed: %s:%d: %s\n", __FILE__, __LINE__,  \
-                    #x);                                                       \
-            abort();                                                           \
-        }                                                                      \
+#define ASSERT(x)                                                                                                     \
+    do {                                                                                                              \
+        if (!(x)) {                                                                                                   \
+            fprintf(stderr, "Assert failed: %s:%d: %s\n", __FILE__, __LINE__, #x);                                    \
+            abort();                                                                                                  \
+        }                                                                                                             \
     } while (0)
 
-typedef void Deflate_func(char *next_in, char *next_out, uLong avail_in,
-                          uLong avail_out);
-typedef void Inflate_func(char *next_in, char *next_out, uLong avail_in,
-                          uLong avail_out);
+typedef void Deflate_func(char *next_in, char *next_out, uLong avail_in, uLong avail_out);
+typedef void Inflate_func(char *next_in, char *next_out, uLong avail_in, uLong avail_out);
 struct util_func {
     Deflate_func *Deflate_fun;
     Inflate_func *Inflate_fun;
@@ -50,11 +46,11 @@ struct util_func {
 void uadk_changeLib(int compression_flag);
 void test_version(void);
 void test_DeflateInitEnd(void);
-void test_DeflateSeg(int dataLen, char *inputData);
+void test_DeflateSeg(const util_func *uf, int dataLen, char *inputData);
 void test_DeflateAll(const util_func *uf, int dataLen, char *inputData);
 void test_DeflateCopyReset(void);
 void test_InflateInitEnd(void);
-void test_InflateSeg(int dataLen, char *inputData);
+void test_InflateSeg(const util_func *uf, int dataLen, char *inputData);
 void test_InflateAll(const util_func *uf, int dataLen, char *inputData);
 void test_InflateCopyReset(void);
 
