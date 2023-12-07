@@ -49,7 +49,7 @@ TEST(Brotli_testcases, testDeflateInitEnd)
 TEST(Brotli_testcases, testDeflateSeg)
 {
     SetValue(2);
-    test_DeflateSeg(&util_Brotli, 0);
+    test_DeflateSeg(&util_Brotli, 1);
 }
 TEST(Brotli_testcases, testDeflateAll)
 {
