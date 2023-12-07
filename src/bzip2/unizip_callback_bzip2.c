@@ -112,10 +112,7 @@ int deflateCopyCB_bzip2(unizip_streamp dest, unizip_streamp source)
     return bzip2_copy(dest->ud, source->ud);
 }
 
-int inflateCopyCB_bzip2(unizip_streamp dest, unizip_streamp source)
-{
-    return bzip2_copy(dest->ud, source->ud);
-}
+int inflateCopyCB_bzip2(unizip_streamp dest, unizip_streamp source) { return bzip2_copy(dest->ud, source->ud); }
 
 int deflateResetCB_bzip2(unizip_streamp strm)
 {
@@ -137,40 +134,16 @@ int inflateResetCB_bzip2(unizip_streamp strm)
     return bzip2_inflateInit(strm->ud);
 }
 
-int compressCB_bzip2(Bytef *dest, uLongf *destLen, const Bytef *source,
-                     uLong sourceLen)
+int compressCB_bzip2(Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen)
 {
     int ret = bzip2_compress((char *)dest, destLen, (char *)source, sourceLen);
     return ret;
 }
 
-int uncompressCB_bzip2(Bytef *dest, uLongf *destLen, const Bytef *source,
-                       uLong sourceLen)
+int uncompressCB_bzip2(Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen)
 {
-    int ret =
-        bzip2_decompress((char *)dest, destLen, (char *)source, sourceLen);
+    int ret = bzip2_decompress((char *)dest, destLen, (char *)source, sourceLen);
     return ret;
 }
 
-uLong compressBound_bzip2(uLong sourceLen)
-{
-    return bzip2_compressBound(sourceLen);
-}
-
-void bzip2_init(callback_t *cb_bzip2)
-{
-    cb_bzip2->versionCB = versionCB_bzip2;
-    cb_bzip2->deflateCB = deflateCB_bzip2;
-    cb_bzip2->deflateInitCB = deflateInitCB_bzip2;
-    cb_bzip2->deflateEndCB = deflateEndCB_bzip2;
-    cb_bzip2->inflateInitCB = inflateInitCB_bzip2;
-    cb_bzip2->inflateCB = inflateCB_bzip2;
-    cb_bzip2->inflateEndCB = inflateEndCB_bzip2;
-    cb_bzip2->deflateCopyCB = deflateCopyCB_bzip2;
-    cb_bzip2->inflateCopyCB = inflateCopyCB_bzip2;
-    cb_bzip2->deflateResetCB = deflateResetCB_bzip2;
-    cb_bzip2->inflateResetCB = inflateResetCB_bzip2;
-    cb_bzip2->compressCB = compressCB_bzip2;
-    cb_bzip2->uncompressCB = uncompressCB_bzip2;
-    cb_bzip2->compressBoundCB = compressBound_bzip2;
-}
+uLong compressBoundCB_bzip2(uLong sourceLen) { return bzip2_compressBound(sourceLen); }

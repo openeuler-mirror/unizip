@@ -20,66 +20,71 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  ********************************************************************************/
-#include <gtest/gtest.h>
-#include "unizip_adapt.h"
 #include "test_util.h"
+#include "unizip_adapt.h"
+#include <fstream>
+#include <gtest/gtest.h>
+#include <lz4.h>
+#include <random>
 #include <time.h>
 #include <unistd.h>
-#include <random>
-#include <fstream>
-#include <lz4.h>
 
-void lz4_deflate_func(char *next_in, char *next_out, uLong avail_in,
-                     uLong avail_out) {
-    LZ4_stream_t* lz4_stream = LZ4_createStream();
-    LZ4_compress_fast_continue(lz4_stream, next_in, next_out, avail_in, avail_out, 1);
-    LZ4_freeStream(lz4_stream);
+void lz4_deflate_func(char *next_in, char *next_out, uLong avail_in, uLong avail_out)
+{
+    LZ4_compress_default(next_in, next_out, avail_in, avail_out);
 }
 
-
-void lz4_inflate_func(char *next_in, char *next_out, uLong avail_in,
-                     uLong avail_out) {
-    LZ4_streamDecode_t* lz4_dstream = LZ4_createStreamDecode();
+void lz4_inflate_func(char *next_in, char *next_out, uLong avail_in, uLong avail_out)
+{
+    LZ4_streamDecode_t *lz4_dstream = LZ4_createStreamDecode();
     LZ4_decompress_safe_continue(lz4_dstream, next_in, next_out, avail_in, avail_out);
     LZ4_freeStreamDecode(lz4_dstream);
 }
 
-const util_func util_Lz4 = {lz4_deflate_func, lz4_inflate_func};
+void lz4_SetParamsDeflate_fun(unizip_streamp strm) { return; }
 
+void lz4_SetParamsInflate_fun(unizip_streamp strm) { return; }
 
-TEST(Lz4_testcases, testVersion) {
-    SetValue(4);
+const util_func util_Lz4 = {lz4_deflate_func, lz4_inflate_func, lz4_SetParamsDeflate_fun, lz4_SetParamsInflate_fun};
+
+TEST(Lz4_testcases, testVersion)
+{
+    SetValue(3);
     test_version();
 }
 
-TEST(Lz4_testcases, testDeflateInitEnd) {
-    SetValue(4);
+TEST(Lz4_testcases, testDeflateInitEnd)
+{
+    SetValue(3);
     test_DeflateInitEnd();
 }
 
 // TEST(Lz4_testcases, testDeflateSeg) {
-//     SetValue(4);
+//     SetValue(3);
 //     test_DeflateSeg(2, nullptr);
 // }
 
-TEST(Lz4_testcases, testDeflateAll) {
-    SetValue(4);
-    test_DeflateAll(&util_Lz4, 2, nullptr);
+TEST(Lz4_testcases, testDeflateAll)
+{
+    SetValue(3);
+    test_DeflateAll(&util_Lz4, 1);
 }
 
-TEST(Lz4_testcases, testDeflateCopyReset) {
-    SetValue(4);
+TEST(Lz4_testcases, testDeflateCopyReset)
+{
+    SetValue(3);
     test_DeflateCopyReset();
 }
 
-TEST(Lz4_testcases, testInflateInitEnd) {
-    SetValue(4);
+TEST(Lz4_testcases, testInflateInitEnd)
+{
+    SetValue(3);
     test_InflateInitEnd();
 }
 
 // // TEST(Lz4_testcases, testInflateSeg) {
 // //     // 分段inflate设置
-// //     SetValue(4);
+// //     SetValue(3);
 // //     SetUpLz4();
 
 // //     //测试数据
@@ -88,12 +93,14 @@ TEST(Lz4_testcases, testInflateInitEnd) {
 // //     test_InflateSegLZ4(dataLen, inputData);
 // // }
 
-TEST(Lz4_testcases, testInflateAll) {
-    SetValue(4);
-    test_InflateAll(&util_Lz4, 200, nullptr);
+TEST(Lz4_testcases, testInflateAll)
+{
+    SetValue(3);
+    test_InflateAll(&util_Lz4);
 }
 
-TEST(Lz4_testcases, testInflateCopyReset) {
-    SetValue(4);
+TEST(Lz4_testcases, testInflateCopyReset)
+{
+    SetValue(3);
     test_InflateCopyReset();
 }

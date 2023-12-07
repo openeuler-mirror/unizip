@@ -50,15 +50,11 @@ int deflateResetCB_bzip2(unizip_streamp strm);
 
 int inflateResetCB_bzip2(unizip_streamp strm);
 
-int compressCB_bzip2(Bytef *dest, uLongf *destLen, const Bytef *source,
-                     uLong sourceLen);
+int compressCB_bzip2(Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen);
 
-int uncompressCB_bzip2(Bytef *dest, uLongf *destLen, const Bytef *source,
-                       uLong sourceLen);
+int uncompressCB_bzip2(Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen);
 
-uLong compressBound_bzip2(uLong sourceLen);
-
-void bzip2_init(callback_t *cb_bzip2);
+uLong compressBoundCB_bzip2(uLong sourceLen);
 
 #ifdef __cplusplus
 }

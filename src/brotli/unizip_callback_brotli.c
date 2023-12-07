@@ -134,22 +134,4 @@ int uncompressCB_brotli(Bytef *dest, uLongf *destLen, const Bytef *source, uLong
     return brotli_decompress((const uint8_t *)source, (size_t)sourceLen, (uint8_t *)dest, (size_t *)destLen);
 }
 
-uLong compressBound_brotli(uLong sourceLen) { return brotli_compressBound(sourceLen); }
-
-void brotli_init(callback_t *cb_brotli)
-{
-    cb_brotli->versionCB = versionCB_brotli;
-    cb_brotli->deflateCB = deflateCB_brotli;
-    cb_brotli->deflateInitCB = deflateInitCB_brotli;
-    cb_brotli->deflateEndCB = deflateEndCB_brotli;
-    cb_brotli->inflateInitCB = inflateInitCB_brotli;
-    cb_brotli->inflateCB = inflateCB_brotli;
-    cb_brotli->inflateEndCB = inflateEndCB_brotli;
-    cb_brotli->deflateCopyCB = deflateCopyCB_brotli;
-    cb_brotli->inflateCopyCB = inflateCopyCB_brotli;
-    cb_brotli->deflateResetCB = deflateResetCB_brotli;
-    cb_brotli->inflateResetCB = inflateResetCB_brotli;
-    cb_brotli->compressCB = compressCB_brotli;
-    cb_brotli->uncompressCB = uncompressCB_brotli;
-    cb_brotli->compressBoundCB = compressBound_brotli;
-}
+uLong compressBoundCB_brotli(uLong sourceLen) { return brotli_compressBound(sourceLen); }

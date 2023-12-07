@@ -112,10 +112,7 @@ int deflateCopyCB_xz(unizip_streamp dest, unizip_streamp source)
     return xz_copy(dest->ud, source->ud);
 }
 
-int inflateCopyCB_xz(unizip_streamp dest, unizip_streamp source)
-{
-    return xz_copy(dest->ud, source->ud);
-}
+int inflateCopyCB_xz(unizip_streamp dest, unizip_streamp source) { return xz_copy(dest->ud, source->ud); }
 
 int deflateResetCB_xz(unizip_streamp strm)
 {
@@ -137,35 +134,14 @@ int inflateResetCB_xz(unizip_streamp strm)
     return xz_inflateInit(strm->ud);
 }
 
-int compressCB_xz(Bytef *dest, uLongf *destLen, const Bytef *source,
-                  uLong sourceLen)
+int compressCB_xz(Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen)
 {
     return xz_compress((uint8_t *)source, sourceLen, (uint8_t *)dest, destLen);
 }
 
-int uncompressCB_xz(Bytef *dest, uLongf *destLen, const Bytef *source,
-                    uLong sourceLen)
+int uncompressCB_xz(Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen)
 {
-    return xz_decompress((uint8_t *)source, sourceLen, (uint8_t *)dest,
-                         destLen);
+    return xz_decompress((uint8_t *)source, sourceLen, (uint8_t *)dest, destLen);
 }
 
-uLong compressBound_xz(uLong sourceLen) { return xz_compressBound(sourceLen); }
-
-void xz_init(callback_t *cb_xz)
-{
-    cb_xz->versionCB = versionCB_xz;
-    cb_xz->deflateCB = deflateCB_xz;
-    cb_xz->deflateInitCB = deflateInitCB_xz;
-    cb_xz->deflateEndCB = deflateEndCB_xz;
-    cb_xz->inflateInitCB = inflateInitCB_xz;
-    cb_xz->inflateCB = inflateCB_xz;
-    cb_xz->inflateEndCB = inflateEndCB_xz;
-    cb_xz->deflateCopyCB = deflateCopyCB_xz;
-    cb_xz->inflateCopyCB = inflateCopyCB_xz;
-    cb_xz->deflateResetCB = deflateResetCB_xz;
-    cb_xz->inflateResetCB = inflateResetCB_xz;
-    cb_xz->compressCB = compressCB_xz;
-    cb_xz->uncompressCB = uncompressCB_xz;
-    cb_xz->compressBoundCB = compressBound_xz;
-}
+uLong compressBoundCB_xz(uLong sourceLen) { return xz_compressBound(sourceLen); }

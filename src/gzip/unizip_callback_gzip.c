@@ -20,34 +20,16 @@
 
 const char *versionCB_gzip(void) { return zlibVersion(); }
 
-int deflateInitCB_gzip(unizip_streamp strm, int level)
-{
-    return deflateInit((z_streamp)strm, level);
-}
+int deflateInitCB_gzip(unizip_streamp strm, int level) { return deflateInit((z_streamp)strm, level); }
 
-int deflateCB_gzip(unizip_streamp strm, int flush)
-{
-    return deflate((z_streamp)strm, flush);
-}
+int deflateCB_gzip(unizip_streamp strm, int flush) { return deflate((z_streamp)strm, flush); }
 
-int deflateEndCB_gzip(unizip_streamp strm)
-{
-    return deflateEnd((z_streamp)strm);
-}
+int deflateEndCB_gzip(unizip_streamp strm) { return deflateEnd((z_streamp)strm); }
 
-int inflateInitCB_gzip(unizip_streamp strm)
-{
-    return inflateInit((z_streamp)strm);
-}
+int inflateInitCB_gzip(unizip_streamp strm) { return inflateInit((z_streamp)strm); }
 
-int inflateCB_gzip(unizip_streamp strm, int flush)
-{
-    return inflate((z_streamp)strm, flush);
-}
-int inflateEndCB_gzip(unizip_streamp strm)
-{
-    return inflateEnd((z_streamp)strm);
-}
+int inflateCB_gzip(unizip_streamp strm, int flush) { return inflate((z_streamp)strm, flush); }
+int inflateEndCB_gzip(unizip_streamp strm) { return inflateEnd((z_streamp)strm); }
 
 int deflateCopyCB_gzip(unizip_streamp dest, unizip_streamp source)
 {
@@ -59,44 +41,39 @@ int inflateCopyCB_gzip(unizip_streamp dest, unizip_streamp source)
     return inflateCopy((z_streamp)dest, (z_streamp)source);
 }
 
-int deflateResetCB_gzip(unizip_streamp strm)
-{
-    return deflateReset((z_streamp)strm);
-}
+int deflateResetCB_gzip(unizip_streamp strm) { return deflateReset((z_streamp)strm); }
 
-int inflateResetCB_gzip(unizip_streamp strm)
-{
-    return inflateReset((z_streamp)strm);
-}
+int inflateResetCB_gzip(unizip_streamp strm) { return inflateReset((z_streamp)strm); }
 
-int compressCB_gzip(Bytef *dest, uLongf *destLen, const Bytef *source,
-                    uLong sourceLen)
+int compressCB_gzip(Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen)
 {
     return compress(dest, destLen, source, sourceLen);
 }
 
-int uncompressCB_gzip(Bytef *dest, uLongf *destLen, const Bytef *source,
-                      uLong sourceLen)
+int uncompressCB_gzip(Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen)
 {
     return uncompress(dest, destLen, source, sourceLen);
 }
 
-uLong compressBound_gzip(uLong sourceLen) { return compressBound(sourceLen); }
+uLong compressBoundCB_gzip(uLong sourceLen) { return compressBound(sourceLen); }
 
-void gzip_init(callback_t *cb_gzip)
+int deflateSetHeaderCB_gzip(unizip_streamp strm, gz_headerp head) { return deflateSetHeader((z_stream *)strm, head); }
+
+int inflateGetHeaderCB_gzip(unizip_streamp strm, gz_headerp head) { return inflateGetHeader((z_stream *)strm, head); }
+
+int deflateInit2CB_gzip(unizip_streamp strm, int level, int method, int windowBits, int memLevel, int strategy)
 {
-    cb_gzip->versionCB = versionCB_gzip;
-    cb_gzip->deflateCB = deflateCB_gzip;
-    cb_gzip->deflateInitCB = deflateInitCB_gzip;
-    cb_gzip->deflateEndCB = deflateEndCB_gzip;
-    cb_gzip->inflateInitCB = inflateInitCB_gzip;
-    cb_gzip->inflateCB = inflateCB_gzip;
-    cb_gzip->inflateEndCB = inflateEndCB_gzip;
-    cb_gzip->deflateCopyCB = deflateCopyCB_gzip;
-    cb_gzip->inflateCopyCB = inflateCopyCB_gzip;
-    cb_gzip->deflateResetCB = deflateResetCB_gzip;
-    cb_gzip->inflateResetCB = inflateResetCB_gzip;
-    cb_gzip->compressCB = compressCB_gzip;
-    cb_gzip->uncompressCB = uncompressCB_gzip;
-    cb_gzip->compressBoundCB = compressBound_gzip;
+    return deflateInit2((z_stream *)strm, level, method, windowBits, memLevel, strategy);
+}
+
+int inflateInit2CB_gzip(unizip_streamp strm, int windowBits) { return inflateInit2((z_stream *)strm, windowBits); }
+
+int compress2CB_gzip(Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen, int level)
+{
+    return compress2(dest, destLen, source, sourceLen, level);
+}
+
+int uncompress2CB_gzip(Bytef *dest, uLongf *destLen, const Bytef *source, uLong *sourceLen)
+{
+    return uncompress2(dest, destLen, source, sourceLen);
 }

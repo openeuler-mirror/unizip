@@ -103,15 +103,9 @@ int inflateCB_lz4(unizip_streamp strm, int flush)
 
 int inflateEndCB_lz4(unizip_streamp strm) { return lz4_inflateEnd(strm->ud); }
 
-int deflateCopyCB_lz4(unizip_streamp dest, unizip_streamp source)
-{
-    return lz4_copy(dest->ud, source->ud);
-}
+int deflateCopyCB_lz4(unizip_streamp dest, unizip_streamp source) { return lz4_copy(dest->ud, source->ud); }
 
-int inflateCopyCB_lz4(unizip_streamp dest, unizip_streamp source)
-{
-    return lz4_copy(dest->ud, source->ud);
-}
+int inflateCopyCB_lz4(unizip_streamp dest, unizip_streamp source) { return lz4_copy(dest->ud, source->ud); }
 
 int deflateResetCB_lz4(unizip_streamp strm)
 {
@@ -126,8 +120,7 @@ int deflateResetCB_lz4(unizip_streamp strm)
     strm->ud = lz4_allocate();
     if (strm->ud == NULL)
         return UNIZIP_MEM_ERROR;
-    if (strm->compression_flag > levelMax_lz4 ||
-        strm->compression_flag < levelMin_lz4) {
+    if (strm->compression_flag > levelMax_lz4 || strm->compression_flag < levelMin_lz4) {
         strm->compression_flag = 1;
     }
 
@@ -149,43 +142,20 @@ int inflateResetCB_lz4(unizip_streamp strm)
     return lz4_inflateInit(strm->ud);
 }
 
-int compressCB_lz4(Bytef *dest, uLongf *destLen, const Bytef *source,
-                   uLong sourceLen)
+int compressCB_lz4(Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen)
 {
     return lz4_compress((char *)dest, destLen, (char *)source, sourceLen);
 }
 
-int uncompressCB_lz4(Bytef *dest, uLongf *destLen, const Bytef *source,
-                     uLong sourceLen)
+int uncompressCB_lz4(Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen)
 {
-    char *dest_c = (char *)dest;
-    char *source_c = (char *)source;
-    unsigned long destLen_c = (unsigned long)*destLen;
-    return lz4_decompress(dest_c, &destLen_c, source_c, sourceLen);
+    return lz4_decompress((char *)dest, destLen, (char *)source, sourceLen);
 }
 
-uLong compressBound_lz4(uLong sourceLen)
+uLong compressBoundCB_lz4(uLong sourceLen)
 {
     /*
     The upper bound size shoud be 0x7E000000 bytes in lz4
     */
     return lz4_compressBound(sourceLen);
-}
-
-void lz4_init(callback_t *cb_lz4)
-{
-    cb_lz4->versionCB = versionCB_lz4;
-    cb_lz4->deflateCB = deflateCB_lz4;
-    cb_lz4->deflateInitCB = deflateInitCB_lz4;
-    cb_lz4->deflateEndCB = deflateEndCB_lz4;
-    cb_lz4->inflateInitCB = inflateInitCB_lz4;
-    cb_lz4->inflateCB = inflateCB_lz4;
-    cb_lz4->inflateEndCB = inflateEndCB_lz4;
-    cb_lz4->deflateCopyCB = deflateCopyCB_lz4;
-    cb_lz4->inflateCopyCB = inflateCopyCB_lz4;
-    cb_lz4->deflateResetCB = deflateResetCB_lz4;
-    cb_lz4->inflateResetCB = inflateResetCB_lz4;
-    cb_lz4->compressCB = compressCB_lz4;
-    cb_lz4->uncompressCB = uncompressCB_lz4;
-    cb_lz4->compressBoundCB = compressBound_lz4;
 }

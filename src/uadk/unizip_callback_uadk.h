@@ -54,9 +54,8 @@ int compressCB_uadk(Bytef *dest, uLongf *destLen, const Bytef *source,
 int uncompressCB_uadk(Bytef *dest, uLongf *destLen, const Bytef *source,
                       uLong sourceLen);
 
-uLong compressBound_uadk(uLong sourceLen);
+uLong compressBoundCB_uadk(uLong sourceLen);
 
-void uadk_init(callback_t *cb_uadk);
 
 #endif // __aarch64__
 

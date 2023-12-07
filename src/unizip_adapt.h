@@ -58,7 +58,7 @@ extern "C" {
 #define inflateSetDictionary unizip_inflateSetDictionary
 #define inflateGetHeader unizip_inflateGetHeader
 
-bool UadkEnabled(void);
+int UadkEnabled(void);
 void SetValue(int v);
 
 // 获取软件包版本号

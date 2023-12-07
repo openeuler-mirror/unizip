@@ -23,14 +23,15 @@
 
 #ifdef __aarch64__
 
+#include "unizip_callback_uadk.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <wchar.h>
 #include "unizip_algorithm_uadk.h"
-#include "unizip_callback_uadk.h"
 
 #define ALG_TYPE WCRYPTO_GZIP
 #define DEFAULT_STREAM_CHUNK (1024 * 64)
+#define MAX_STREAM_CHUNK (1024 * 1024)
 #define DEFLATE_MIN_CHUNK 256
 #define INFLATE_MIN_CHUNK 32
 #define POSSIBLE_INCREASE 0.1
@@ -49,8 +50,7 @@ void resetUadk(unizip_streamp strm)
 
 int deflateInitCB_uadk(unizip_streamp strm, int level)
 {
-    if ((strm->ud = (struct zip_stream *)malloc(sizeof(struct zip_stream))) ==
-        NULL) {
+    if ((strm->ud = (struct zip_stream *)malloc(sizeof(struct zip_stream))) == NULL) {
         return UNIZIP_MEM_ERROR;
     }
     int ret = UNIZIP_OK;
@@ -60,9 +60,8 @@ int deflateInitCB_uadk(unizip_streamp strm, int level)
     } else if (algType == WCRYPTO_GZIP) {
         int windowBits = 15;
         int gzipEncoding = 16;
-        ret = hw_deflateInit2(strm->ud, Z_DEFAULT_COMPRESSION, Z_DEFLATED,
-                              windowBits | gzipEncoding, DEF_MEM_LEVEL,
-                              Z_DEFAULT_STRATEGY);
+        ret =
+            hw_deflateInit2(strm->ud, level, Z_DEFLATED, windowBits | gzipEncoding, DEF_MEM_LEVEL, Z_DEFAULT_STRATEGY);
     } else {
         ret = UNIZIP_DATA_ERROR;
     }
@@ -80,26 +79,41 @@ int deflateCB_uadk(unizip_streamp strm, int flush)
     struct zip_stream *ctx = (struct zip_stream *)strm->ud;
     unsigned char *src = (unsigned char *)strm->next_in;
     unsigned char *dst = (unsigned char *)strm->next_out;
-    unsigned long inStreamChunk = (unsigned long)strm->avail_in;
-    unsigned long outStreamChunk = (unsigned long)strm->avail_out;
-    if (outStreamChunk < DEFLATE_MIN_CHUNK) {
-        outStreamChunk = DEFLATE_MIN_CHUNK;
+    unsigned long in_stream_chunk = (unsigned long)strm->avail_in;
+    unsigned long out_stream_chunk = (unsigned long)strm->avail_out;
+    if (out_stream_chunk < DEFLATE_MIN_CHUNK) {
+        out_stream_chunk = DEFLATE_MIN_CHUNK;
     }
-    ctx->avail_in = inStreamChunk;
-    ctx->avail_out = outStreamChunk;
+    if (out_stream_chunk > MAX_STREAM_CHUNK) {
+        out_stream_chunk = MAX_STREAM_CHUNK;
+    }
     ctx->total_in = (unsigned long)strm->total_in;
     ctx->total_out = (unsigned long)strm->total_out;
-    memcpy(ctx->next_in, src, inStreamChunk);
+    unsigned long srclen = in_stream_chunk; // 全部输入数据
     int err = 0;
-    ctx->avail_out = outStreamChunk;
-    err = hw_deflate(ctx, flush);
-    if (err < 0) {
-        return err;
-    }
-    int have = outStreamChunk - ctx->avail_out;
-    memcpy(dst, ctx->next_out, have);
-    dst += have;
-    src += inStreamChunk - ctx->avail_in;
+    do {
+        if (srclen > MAX_STREAM_CHUNK) {
+            memcpy(ctx->next_in, src, MAX_STREAM_CHUNK);
+            src += MAX_STREAM_CHUNK;
+            ctx->avail_in = MAX_STREAM_CHUNK;
+            srclen -= MAX_STREAM_CHUNK;
+        } else {
+            memcpy(ctx->next_in, src, srclen);
+            src += srclen;
+            ctx->avail_in = srclen;
+            srclen = 0;
+        }
+        do {
+            ctx->avail_out = out_stream_chunk;
+            err = hw_deflate(ctx, flush);
+            if (err < 0) {
+                return err;
+            }
+            int have = out_stream_chunk - ctx->avail_out;
+            memcpy(dst, ctx->next_out, have);
+            dst += have;
+        } while (ctx->avail_in > 0);
+    } while (srclen > 0);
     strm->next_in = src;
     strm->next_out = dst;
     strm->avail_in = ctx->avail_in;
@@ -117,8 +131,7 @@ int deflateEndCB_uadk(unizip_streamp strm)
 
 int inflateInitCB_uadk(unizip_streamp strm)
 {
-    if ((strm->ud = (struct zip_stream *)malloc(sizeof(struct zip_stream))) ==
-        NULL) {
+    if ((strm->ud = (struct zip_stream *)malloc(sizeof(struct zip_stream))) == NULL) {
         return UNIZIP_MEM_ERROR;
     }
     int ret = UNIZIP_OK;
@@ -145,25 +158,45 @@ int inflateCB_uadk(unizip_streamp strm, int flush)
     struct zip_stream *ctx = (struct zip_stream *)strm->ud;
     unsigned char *src = (unsigned char *)strm->next_in;
     unsigned char *dst = (unsigned char *)strm->next_out;
-    unsigned long inStreamChunk = (unsigned long)strm->avail_in;
-    unsigned long outStreamChunk = (unsigned long)strm->avail_out;
-    if (outStreamChunk < INFLATE_MIN_CHUNK) {
-        outStreamChunk = INFLATE_MIN_CHUNK;
+    unsigned long in_stream_chunk = (unsigned long)strm->avail_in;
+    unsigned long out_stream_chunk = (unsigned long)strm->avail_out;
+    if (out_stream_chunk < INFLATE_MIN_CHUNK) {
+        out_stream_chunk = INFLATE_MIN_CHUNK;
     }
-    ctx->avail_in = inStreamChunk;
-    ctx->avail_out = outStreamChunk;
+    if (out_stream_chunk > MAX_STREAM_CHUNK) {
+        out_stream_chunk = MAX_STREAM_CHUNK;
+    }
+    unsigned long srclen = in_stream_chunk; // 全部输入数据
     ctx->total_in = (unsigned long)strm->total_in;
     ctx->total_out = (unsigned long)strm->total_out;
-    memcpy(ctx->next_in, src, inStreamChunk);
     int err = 0;
-    err = hw_inflate(ctx, flush);
-    if (err < 0) {
-        return err;
-    }
-    int have = outStreamChunk - ctx->avail_out;
-    memcpy(dst, ctx->next_out, have);
-    dst += have;
-    src += inStreamChunk - ctx->avail_in;
+    do {
+        if (srclen > MAX_STREAM_CHUNK) {
+            memcpy(ctx->next_in, src, MAX_STREAM_CHUNK);
+            src += MAX_STREAM_CHUNK;
+            ctx->avail_in = MAX_STREAM_CHUNK;
+            srclen -= MAX_STREAM_CHUNK;
+        } else {
+            memcpy(ctx->next_in, src, srclen);
+            src += srclen;
+            ctx->avail_in = srclen;
+            srclen = 0;
+        }
+        if (ctx->avail_in == 0) {
+            err = UNIZIP_STREAM_END;
+            break;
+        }
+        do {
+            ctx->avail_out = out_stream_chunk;
+            err = hw_inflate(ctx, flush);
+            if (err < 0) {
+                return err;
+            }
+            int have = out_stream_chunk - ctx->avail_out;
+            memcpy(dst, ctx->next_out, have);
+            dst += have;
+        } while (ctx->avail_in > 0);
+    } while (srclen > 0);
     strm->next_in = src;
     strm->next_out = dst;
     strm->avail_in = ctx->avail_in;
@@ -182,102 +215,44 @@ int inflateEndCB_uadk(unizip_streamp strm)
 int deflateCopyCB_uadk(unizip_streamp dest, unizip_streamp source)
 {
     dest->compression_flag = source->compression_flag;
-    return hw_copy(dest->ud, source->ud, WCRYPTO_ZLIB, WCRYPTO_DEFLATE);
+    return deflateInitCB_uadk(dest, Z_DEFAULT_COMPRESSION);
 }
 
 int inflateCopyCB_uadk(unizip_streamp dest, unizip_streamp source)
 {
     dest->compression_flag = source->compression_flag;
-    return hw_copy(dest->ud, source->ud, WCRYPTO_ZLIB, WCRYPTO_INFLATE);
+    return inflateInitCB_uadk(dest);
 }
 
 int deflateResetCB_uadk(unizip_streamp strm)
 {
     hw_deflateEnd(strm->ud);
-    if ((strm->ud = (struct zip_stream *)malloc(sizeof(struct zip_stream))) ==
-        NULL) {
-        return UNIZIP_MEM_ERROR;
-    }
-
-    int ret = UNIZIP_OK;
-    int algType = strm->compression_flag;
-    if (algType == WCRYPTO_ZLIB) {
-        ret = hw_deflateInit(strm->ud, Z_DEFAULT_COMPRESSION);
-    } else if (algType == WCRYPTO_GZIP) {
-        int windowBits = 15;
-        int gzipEncoding = 16;
-        ret = hw_deflateInit2(strm->ud, Z_DEFAULT_COMPRESSION, Z_DEFLATED,
-                              windowBits | gzipEncoding, DEF_MEM_LEVEL,
-                              Z_DEFAULT_STRATEGY);
-    } else {
-        ret = UNIZIP_DATA_ERROR;
-    }
-    resetUadk(strm);
-    return ret;
+    return deflateInitCB_uadk(strm, Z_DEFAULT_COMPRESSION);
 }
 
 int inflateResetCB_uadk(unizip_streamp strm)
 {
     hw_inflateEnd(strm->ud);
-    if ((strm->ud = (struct zip_stream *)malloc(sizeof(struct zip_stream))) ==
-        NULL) {
-        return UNIZIP_MEM_ERROR;
-    }
-
-    int ret = UNIZIP_OK;
-    int algType = strm->compression_flag;
-    if (algType == WCRYPTO_ZLIB) {
-        ret = hw_inflateInit(strm->ud);
-    } else if (algType == WCRYPTO_GZIP) {
-        int gzipEncoding = 16;
-        ret = hw_inflateInit2(strm->ud, gzipEncoding + MAX_WBITS);
-    } else {
-        ret = UNIZIP_DATA_ERROR;
-    }
-    resetUadk(strm);
-    return ret;
+    return inflateInitCB_uadk(strm);
 }
 
-int compressCB_uadk(Bytef *dest, uLongf *destLen, const Bytef *source,
-                    uLong sourceLen)
+int compressCB_uadk(Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen)
 {
-    int ret = hw_stream_compress(ALG_TYPE, DEFAULT_STREAM_CHUNK,
-                                 (unsigned char *)dest, (ulong *)destLen,
+    int ret = hw_stream_compress(ALG_TYPE, DEFAULT_STREAM_CHUNK, (unsigned char *)dest, (ulong *)destLen,
                                  (unsigned char *)source, sourceLen);
     return ret;
 }
 
-int uncompressCB_uadk(Bytef *dest, uLongf *destLen, const Bytef *source,
-                      uLong sourceLen)
+int uncompressCB_uadk(Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen)
 {
-    int ret = hw_stream_decompress(ALG_TYPE, DEFAULT_STREAM_CHUNK,
-                                   (unsigned char *)dest, (ulong *)destLen,
+    int ret = hw_stream_decompress(ALG_TYPE, DEFAULT_STREAM_CHUNK, (unsigned char *)dest, (ulong *)destLen,
                                    (unsigned char *)source, sourceLen);
     return ret;
 }
 
-uLong compressBound_uadk(uLong sourceLen)
+uLong compressBoundCB_uadk(uLong sourceLen)
 {
-    return sourceLen * (1 + POSSIBLE_INCREASE) + (sourceLen >> 12) +
-           (sourceLen >> 14) + (sourceLen >> 25) + 13;
-}
-
-void uadk_init(callback_t *cb_uadk)
-{
-    cb_uadk->versionCB = versionCB_uadk;
-    cb_uadk->deflateCB = deflateCB_uadk;
-    cb_uadk->deflateInitCB = deflateInitCB_uadk;
-    cb_uadk->deflateEndCB = deflateEndCB_uadk;
-    cb_uadk->inflateInitCB = inflateInitCB_uadk;
-    cb_uadk->inflateCB = inflateCB_uadk;
-    cb_uadk->inflateEndCB = inflateEndCB_uadk;
-    cb_uadk->deflateCopyCB = deflateCopyCB_uadk;
-    cb_uadk->inflateCopyCB = inflateCopyCB_uadk;
-    cb_uadk->deflateResetCB = deflateResetCB_uadk;
-    cb_uadk->inflateResetCB = inflateResetCB_uadk;
-    cb_uadk->compressCB = compressCB_uadk;
-    cb_uadk->uncompressCB = uncompressCB_uadk;
-    cb_uadk->compressBoundCB = compressBound_uadk;
+    return sourceLen * (1 + POSSIBLE_INCREASE) + (sourceLen >> 12) + (sourceLen >> 14) + (sourceLen >> 25) + 13;
 }
 
 #endif // __aarch64__

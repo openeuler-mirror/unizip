@@ -62,74 +62,45 @@ int uncompressCB_zlib(Bytef *dest, uLongf *destLen, const Bytef *source, uLong s
     return uncompress(dest, destLen, source, sourceLen);
 }
 
-uLong compressBound_zlib(uLong sourceLen) { return compressBound(sourceLen); }
+uLong compressBoundCB_zlib(uLong sourceLen) { return compressBound(sourceLen); }
 
-int deflateInit2_zlib(unizip_streamp strm, int level, int method, int windowBits, int memLevel, int strategy)
+int deflateInit2CB_zlib(unizip_streamp strm, int level, int method, int windowBits, int memLevel, int strategy)
 {
     return deflateInit2((z_stream *)strm, level, method, windowBits, memLevel, strategy);
 }
 
-int inflateInit2_zlib(unizip_streamp strm, int windowBits) { return inflateInit2((z_stream *)strm, windowBits); }
+int inflateInit2CB_zlib(unizip_streamp strm, int windowBits) { return inflateInit2((z_stream *)strm, windowBits); }
 
-int compress2_zlib(Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen, int level)
+int compress2CB_zlib(Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen, int level)
 {
     return compress2(dest, destLen, source, sourceLen, level);
 }
 
-int uncompress2_zlib(Bytef *dest, uLongf *destLen, const Bytef *source, uLong *sourceLen)
+int uncompress2CB_zlib(Bytef *dest, uLongf *destLen, const Bytef *source, uLong *sourceLen)
 {
     return uncompress2(dest, destLen, source, sourceLen);
 }
 
-int deflateParams_zlib(unizip_streamp strm, int level, int strategy)
+int deflateParamsCB_zlib(unizip_streamp strm, int level, int strategy)
 {
     return deflateParams((z_stream *)strm, level, strategy);
 }
 
-int deflateSetDictionary_zlib(unizip_streamp strm, const Bytef *dictionary, uInt dictLength)
+int deflateSetDictionaryCB_zlib(unizip_streamp strm, const Bytef *dictionary, uInt dictLength)
 {
     return deflateSetDictionary((z_stream *)strm, dictionary, dictLength);
 }
 
-int deflatePending_zlib(unizip_streamp strm, unsigned *pending, int *bits)
+int deflatePendingCB_zlib(unizip_streamp strm, unsigned *pending, int *bits)
 {
     return deflatePending((z_stream *)strm, pending, bits);
 }
 
-int deflateSetHeader_zlib(unizip_streamp strm, gz_headerp head) { return deflateSetHeader((z_stream *)strm, head); }
+int deflateSetHeaderCB_zlib(unizip_streamp strm, gz_headerp head) { return deflateSetHeader((z_stream *)strm, head); }
 
-int inflateSetDictionary_zlib(unizip_streamp strm, const Bytef *dictionary, uInt dictLength)
+int inflateSetDictionaryCB_zlib(unizip_streamp strm, const Bytef *dictionary, uInt dictLength)
 {
     return inflateSetDictionary((z_stream *)strm, dictionary, dictLength);
 }
 
-int inflateGetHeader_zlib(unizip_streamp strm, gz_headerp head) { return inflateGetHeader((z_stream *)strm, head); }
-
-void zlib_init(callback_t *cb_zlib)
-{
-
-    cb_zlib->versionCB = versionCB_zlib;
-    cb_zlib->deflateCB = deflateCB_zlib;
-    cb_zlib->deflateInitCB = deflateInitCB_zlib;
-    cb_zlib->deflateEndCB = deflateEndCB_zlib;
-    cb_zlib->inflateInitCB = inflateInitCB_zlib;
-    cb_zlib->inflateCB = inflateCB_zlib;
-    cb_zlib->inflateEndCB = inflateEndCB_zlib;
-    cb_zlib->deflateCopyCB = deflateCopyCB_zlib;
-    cb_zlib->inflateCopyCB = inflateCopyCB_zlib;
-    cb_zlib->deflateResetCB = deflateResetCB_zlib;
-    cb_zlib->inflateResetCB = inflateResetCB_zlib;
-    cb_zlib->compressCB = compressCB_zlib;
-    cb_zlib->uncompressCB = uncompressCB_zlib;
-    cb_zlib->compressBoundCB = compressBound_zlib;
-    cb_zlib->deflateInit2CB = deflateInit2_zlib;
-    cb_zlib->inflateInit2CB = inflateInit2_zlib;
-    cb_zlib->compress2CB = compress2_zlib;
-    cb_zlib->uncompress2CB = uncompress2_zlib;
-    cb_zlib->deflateParamsCB = deflateParams_zlib;
-    cb_zlib->deflateSetDictionaryCB = deflateSetDictionary_zlib;
-    cb_zlib->deflatePendingCB = deflatePending_zlib;
-    cb_zlib->deflateSetHeaderCB = deflateSetHeader_zlib;
-    cb_zlib->inflateSetDictionaryCB = inflateSetDictionary_zlib;
-    cb_zlib->inflateGetHeaderCB = inflateGetHeader_zlib;
-}
+int inflateGetHeaderCB_zlib(unizip_streamp strm, gz_headerp head) { return inflateGetHeader((z_stream *)strm, head); }

@@ -6,7 +6,7 @@
 extern "C" {
 #endif
 
-const char *versionCB_bzip2(void);
+const char *versionCB_snappy(void);
 
 int deflateInitCB_snappy(unizip_streamp strm, int level);
 
@@ -32,9 +32,7 @@ int compressCB_snappy(Bytef *dest, uLongf *destLen, const Bytef *source, uLong s
 
 int uncompressCB_snappy(Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen);
 
-uLong compressBound_snappy(uLong sourceLen);
-
-void snappy_init(callback_t *cb_snappy);
+uLong compressBoundCB_snappy(uLong sourceLen);
 
 #ifdef __cplusplus
 }

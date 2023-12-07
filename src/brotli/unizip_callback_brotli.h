@@ -28,8 +28,6 @@ int compressCB_brotli(Bytef *dest, uLongf *destLen, const Bytef *source, uLong s
 
 int uncompressCB_brotli(Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen);
 
-uLong compressBound_brotli(uLong sourceLen);
-
-void brotli_init(callback_t *cb_brotli);
+uLong compressBoundCB_brotli(uLong sourceLen);
 
 #endif

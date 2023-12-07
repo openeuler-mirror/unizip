@@ -62,49 +62,53 @@ void z7_Inflate_func(char *next_in, char *next_out, uLong avail_in, uLong avail_
     LzmaDec_Free(&dec, &g_Alloc);
 }
 
-const util_func util_7zip = {z7_Deflate_func, z7_Inflate_func};
+void z7_SetParamsDeflate_fun(unizip_streamp strm) { return; }
+
+void z7_SetParamsInflate_fun(unizip_streamp strm) { return; }
+
+const util_func util_7zip = {z7_Deflate_func, z7_Inflate_func, z7_SetParamsDeflate_fun, z7_SetParamsInflate_fun};
 
 TEST(zip7_testcases, testVersion)
 {
-    SetValue(7);
+    SetValue(6);
     test_version();
 }
 TEST(zip7_testcases, testDeflateInitEnd)
 {
-    SetValue(7);
+    SetValue(6);
     test_DeflateInitEnd();
 }
 // TEST(zip7_testcases, testDeflateSeg) {
-//   SetValue(7);
+//   SetValue(6);
 //   test_DeflateSeg(2, nullptr);
 // }
 TEST(zip7_testcases, testDeflateAll)
 {
-    SetValue(7);
-    test_DeflateAll(&util_7zip, 200, nullptr);
+    SetValue(6);
+    test_DeflateAll(&util_7zip, 1);
 }
 TEST(zip7_testcases, testDeflateCopyReset)
 {
-    SetValue(7);
+    SetValue(6);
     test_DeflateCopyReset();
 }
 TEST(zip7_testcases, testInflateInitEnd)
 {
-    SetValue(7);
+    SetValue(6);
     test_InflateInitEnd();
 }
 TEST(zip7_testcases, testInflateSeg)
 {
-    SetValue(7);
-    test_InflateSeg(&util_7zip, 2, nullptr);
+    SetValue(6);
+    test_InflateSeg(&util_7zip, 0);
 }
 TEST(zip7_testcases, testInflateAll)
 {
-    SetValue(7);
-    test_InflateAll(&util_7zip, 200, nullptr);
+    SetValue(6);
+    test_InflateAll(&util_7zip);
 }
 TEST(zip7_testcases, testInflateCopyReset)
 {
-    SetValue(7);
+    SetValue(6);
     test_InflateCopyReset();
 }

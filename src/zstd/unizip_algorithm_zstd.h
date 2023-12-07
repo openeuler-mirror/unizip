@@ -63,11 +63,9 @@ int zstd_deflatecopy(struct zstd_ctx *dest, struct zstd_ctx *source);
 
 int zstd_inflatecopy(struct zstd_ctx *dest, struct zstd_ctx *source);
 
-int zstd_decompress(char *dest, unsigned long *destLen, const char *source,
-                    unsigned long sourceLen);
+int zstd_decompress(char *dest, unsigned long *destLen, const char *source, unsigned long sourceLen);
 
-int zstd_compress(char *dest, unsigned long *destLen, const char *source,
-                  unsigned long sourceLen);
+int zstd_compress(char *dest, unsigned long *destLen, const char *source, unsigned long sourceLen);
 
 unsigned long zstd_compressBound(unsigned long uncompressed_size);
 
