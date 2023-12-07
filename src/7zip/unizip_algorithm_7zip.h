@@ -8,7 +8,7 @@
 #include "lzma-sdk/C/LzmaLib.h"
 #include "lzma-sdk/C/Precomp.h"
 
-#define levelMin_7zip 1
+#define levelMin_7zip 0
 #define levelMax_7zip 9
 #define levelDefault_7zip 5
 #define actionEnd_7zip 4
