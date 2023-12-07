@@ -43,15 +43,23 @@ int deflateResetCB_gzip(unizip_streamp strm);
 
 int inflateResetCB_gzip(unizip_streamp strm);
 
-int compressCB_gzip(Bytef *dest, uLongf *destLen, const Bytef *source,
-                    uLong sourceLen);
+int compressCB_gzip(Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen);
 
-int uncompressCB_gzip(Bytef *dest, uLongf *destLen, const Bytef *source,
-                      uLong sourceLen);
+int uncompressCB_gzip(Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen);
 
-uLong compressBound_gzip(uLong sourceLen);
+uLong compressBoundCB_gzip(uLong sourceLen);
 
-void gzip_init(callback_t *cb_gzip);
+int deflateSetHeaderCB_gzip(unizip_streamp strm, gz_headerp head);
+
+int inflateGetHeaderCB_gzip(unizip_streamp strm, gz_headerp head);
+
+int deflateInit2CB_gzip(unizip_streamp strm, int level, int method, int windowBits, int memLevel, int strategy);
+
+int inflateInit2CB_gzip(unizip_streamp strm, int windowBits);
+
+int compress2CB_gzip(Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen, int level);
+
+int uncompress2CB_gzip(Bytef *dest, uLongf *destLen, const Bytef *source, uLong *sourceLen);
 
 #ifdef __cplusplus
 }

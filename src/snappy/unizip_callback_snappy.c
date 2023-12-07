@@ -120,25 +120,6 @@ int compressCB_snappy(Bytef *dest, uLongf *destLen, const Bytef *source, uLong s
 int uncompressCB_snappy(Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen)
 {
     return snappy_decompress_new((char *)source, (size_t)sourceLen, (char *)dest, (size_t *)destLen);
-    ;
 }
 
-uLong compressBound_snappy(uLong sourceLen) { return snappy_compressBound(sourceLen); }
-
-void snappy_init(callback_t *cb_snappy)
-{
-    cb_snappy->versionCB = versionCB_snappy;
-    cb_snappy->deflateCB = deflateCB_snappy;
-    cb_snappy->deflateInitCB = deflateInitCB_snappy;
-    cb_snappy->deflateEndCB = deflateEndCB_snappy;
-    cb_snappy->inflateInitCB = inflateInitCB_snappy;
-    cb_snappy->inflateCB = inflateCB_snappy;
-    cb_snappy->inflateEndCB = inflateEndCB_snappy;
-    cb_snappy->deflateCopyCB = deflateCopyCB_snappy;
-    cb_snappy->inflateCopyCB = inflateCopyCB_snappy;
-    cb_snappy->deflateResetCB = deflateResetCB_snappy;
-    cb_snappy->inflateResetCB = inflateResetCB_snappy;
-    cb_snappy->compressCB = compressCB_snappy;
-    cb_snappy->uncompressCB = uncompressCB_snappy;
-    cb_snappy->compressBoundCB = snappy_compressBound;
-}
+uLong compressBoundCB_snappy(uLong sourceLen) { return snappy_compressBound(sourceLen); }

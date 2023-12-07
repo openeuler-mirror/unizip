@@ -117,23 +117,28 @@ int xz_End(struct xz_ctx *ctx)
 int xz_compress(uint8_t *source, size_t sourceLen, uint8_t *dest,
                 size_t *destLen)
 {
+    lzma_stream xzstr = LZMA_STREAM_INIT;
+    lzma_options_lzma opt_lzma2;
+    if (lzma_lzma_preset(&opt_lzma2, LZMA_PRESET_DEFAULT)) {
+        return UNIZIP_DATA_ERROR;
+    }
+    lzma_filter filters[] = {
+        {.id = LZMA_FILTER_X86, .options = NULL},
+        {.id = LZMA_FILTER_LZMA2, .options = &opt_lzma2},
+        {.id = LZMA_VLI_UNKNOWN, .options = NULL},
+    };
+    lzma_ret ret = lzma_stream_encoder(&xzstr, filters, LZMA_CHECK_CRC64);
+
     if (dest == NULL || destLen == NULL || source == NULL)
         return UNIZIP_DATA_ERROR;
-    struct xz_ctx *ctx = xz_allocate();
-    if (ctx == NULL)
-        return UNIZIP_MEM_ERROR;
-    int ret;
-    ret = xz_deflateInit(ctx, 0);
-    if (ret != LZMA_OK) {
-        return ret;
-    }
-    ctx->xzstr.next_in = source;
-    ctx->xzstr.next_out = dest;
-    ctx->xzstr.avail_in = sourceLen;
-    ctx->xzstr.avail_out = *destLen;
-    ret = lzma_code(&ctx->xzstr, LZMA_FINISH);
+
+    xzstr.next_in = source;
+    xzstr.next_out = dest;
+    xzstr.avail_in = sourceLen;
+    xzstr.avail_out = *destLen;
+    ret = lzma_code(&xzstr, LZMA_FINISH);
     if (ret == LZMA_STREAM_END) {
-        *destLen -= ctx->xzstr.avail_out;
+        *destLen -= xzstr.avail_out;
         return UNIZIP_OK; // Decompression is complete
     }
     return map_error(ret);
@@ -144,21 +149,16 @@ int xz_decompress(uint8_t *source, size_t sourceLen, uint8_t *dest,
 {
     if (dest == NULL || destLen == NULL || source == NULL)
         return UNIZIP_DATA_ERROR;
-    struct xz_ctx *ctx = xz_allocate();
-    if (ctx == NULL)
-        return UNIZIP_MEM_ERROR;
-    int ret;
-    ret = xz_inflateInit(ctx);
-    if (ret != LZMA_OK) {
-        return ret;
-    }
-    ctx->xzstr.next_in = source;
-    ctx->xzstr.next_out = dest;
-    ctx->xzstr.avail_in = sourceLen;
-    ctx->xzstr.avail_out = *destLen;
-    ret = lzma_code(&ctx->xzstr, LZMA_FINISH);
+    lzma_stream xzstr = LZMA_STREAM_INIT;
+    lzma_ret ret =
+        lzma_stream_decoder(&xzstr, UINT64_MAX, LZMA_CONCATENATED);
+    xzstr.next_in = source;
+    xzstr.next_out = dest;
+    xzstr.avail_in = sourceLen;
+    xzstr.avail_out = *destLen;
+    ret = lzma_code(&xzstr, LZMA_FINISH);
     if (ret == LZMA_STREAM_END) {
-        *destLen -= ctx->xzstr.avail_out;
+        *destLen -= xzstr.avail_out;
         return UNIZIP_OK; // Decompression is complete
     }
     return map_error(ret);

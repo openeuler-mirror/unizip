@@ -67,7 +67,6 @@ static int hw_init(struct zip_stream *zstrm, int alg_type, int comp_optype)
 
     ret = wd_request_queue(q);
     if (ret) {
-        ERR_CODE("wd_request_queue fail\n");
         goto hw_q_free;
     }
     memset(&mm_setup, 0, sizeof(mm_setup));
@@ -76,7 +75,6 @@ static int hw_init(struct zip_stream *zstrm, int alg_type, int comp_optype)
     mm_setup.align_size = 128;
     pool = wd_blkpool_create(q, &mm_setup);
     if (!pool) {
-        ERR_CODE("create pool fail\n");
         goto release_q;
     }
     in = wd_alloc_blk(pool);
@@ -97,12 +95,10 @@ static int hw_init(struct zip_stream *zstrm, int alg_type, int comp_optype)
     ctx_setup.br.usr = pool;
     zip_ctx = wcrypto_create_comp_ctx(q, &ctx_setup);
     if (!zip_ctx) {
-        ERR_CODE("zip_alloc_comp_ctx fail\n");
         goto buf_free;
     }
     opdata = calloc(1, sizeof(struct wcrypto_comp_op_data));
     if (opdata == NULL) {
-        ERR_CODE("alloc opdata fail\n");
         goto comp_ctx_free;
     }
     opdata->in = in;
@@ -112,7 +108,6 @@ static int hw_init(struct zip_stream *zstrm, int alg_type, int comp_optype)
 
     ctl = calloc(1, sizeof(struct zip_ctl));
     if (ctl == NULL) {
-        ERR_CODE("alloc ctl fail\n");
         goto comp_opdata_free;
     }
 
@@ -210,9 +205,6 @@ static int append_store_block(struct zip_stream *zstrm, int flush)
         memcpy(zstrm->next_out + 9, &isize, 4);
         zstrm->total_out += 8;
         zstrm->avail_out -= 8;
-    } else {
-        ERR_CODE("in append store block, wrong alg type %d.\n",
-                 opdata->alg_type);
     }
     return UNIZIP_STREAM_END;
 }
@@ -371,7 +363,6 @@ int hw_stream_compress(int alg_type, int blksize, unsigned char *dst,
 {
     int flush, have;
     int ret;
-    int level = 0;
     struct zip_stream zstrm;
     int windowBits = 15;
     int GZIP_ENCODING = 16;
@@ -382,7 +373,7 @@ int hw_stream_compress(int alg_type, int blksize, unsigned char *dst,
     *dstlen = 0;
 
     if (alg_type == WCRYPTO_ZLIB) {
-        ret = hw_deflateInit(&zstrm, level);
+        ret = hw_deflateInit(&zstrm, Z_DEFAULT_COMPRESSION);
     } else {
         /* deflate for gzip data */
         ret = hw_deflateInit2(&zstrm, Z_DEFAULT_COMPRESSION, Z_DEFLATED,
@@ -519,29 +510,6 @@ const char *uadk_getVersion(void)
     }
     pclose(fp); // 关闭文件流
     return version;
-}
-
-int hw_copy(struct zip_stream *dest, struct zip_stream *source, int alg_type,
-            int comp_optype)
-{
-    if (dest != NULL && source != NULL) {
-        memcpy(dest, source, sizeof(struct zip_stream));
-        if (source->reserved != NULL) {
-            dest->reserved =
-                calloc(1, sizeof(struct zip_ctl)); // 创建reversed的空间 zip_ctl
-            struct zip_ctl *dst_ctl = dest->reserved;
-            struct zip_ctl *src_ctl = source->reserved;
-            dst_ctl->opdata = calloc(
-                1, sizeof(struct wcrypto_comp_op_data)); // 创建opdata的空间
-                                                         // wcrypto_comp_op_data
-            if (dest->reserved == NULL || dst_ctl->opdata == NULL)
-                return UNIZIP_MEM_ERROR;
-            memcpy(dst_ctl->opdata, src_ctl->opdata,
-                   sizeof(struct wcrypto_comp_op_data));
-        }
-        return UNIZIP_OK;
-    }
-    return UNIZIP_DATA_ERROR;
 }
 
 #endif // __aarch64__

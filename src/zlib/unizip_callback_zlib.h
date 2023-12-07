@@ -54,29 +54,27 @@ int compressCB_zlib(Bytef *dest, uLongf *destLen, const Bytef *source, uLong sou
 
 int uncompressCB_zlib(Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen);
 
-uLong compressBound_zlib(uLong sourceLen);
+uLong compressBoundCB_zlib(uLong sourceLen);
 
-void zlib_init(callback_t *cb_zlib);
+int deflateInit2CB_zlib(unizip_streamp strm, int level, int method, int windowBits, int memLevel, int strategy);
 
-int deflateInit2_zlib(unizip_streamp strm, int level, int method, int windowBits, int memLevel, int strategy);
+int inflateInit2CB_zlib(unizip_streamp strm, int windowBits);
 
-int inflateInit2_zlib(unizip_streamp strm, int windowBits);
+int compress2CB_zlib(Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen, int level);
 
-int compress2_zlib(Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen, int level);
+int uncompress2CB_zlib(Bytef *dest, uLongf *destLen, const Bytef *source, uLong *sourceLen);
 
-int uncompress2_zlib(Bytef *dest, uLongf *destLen, const Bytef *source, uLong *sourceLen);
+int deflateParamsCB_zlib(unizip_streamp strm, int level, int strategy);
 
-int deflateParams_zlib(unizip_streamp strm, int level, int strategy);
+int deflateSetDictionaryCB_zlib(unizip_streamp strm, const Bytef *dictionary, uInt dictLength);
 
-int deflateSetDictionary_zlib(unizip_streamp strm, const Bytef *dictionary, uInt dictLength);
+int deflatePendingCB_zlib(unizip_streamp strm, unsigned *pending, int *bits);
 
-int deflatePending_zlib(unizip_streamp strm, unsigned *pending, int *bits);
+int deflateSetHeaderCB_zlib(unizip_streamp strm, gz_headerp head);
 
-int deflateSetHeader_zlib(unizip_streamp strm, gz_headerp head);
+int inflateSetDictionaryCB_zlib(unizip_streamp strm, const Bytef *dictionary, uInt dictLength);
 
-int inflateSetDictionary_zlib(unizip_streamp strm, const Bytef *dictionary, uInt dictLength);
-
-int inflateGetHeader_zlib(unizip_streamp strm, gz_headerp head);
+int inflateGetHeaderCB_zlib(unizip_streamp strm, gz_headerp head);
 
 #ifdef __cplusplus
 }

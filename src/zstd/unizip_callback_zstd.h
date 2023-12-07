@@ -50,15 +50,12 @@ int deflateResetCB_zstd(unizip_streamp strm);
 
 int inflateResetCB_zstd(unizip_streamp strm);
 
-int compressCB_zstd(Bytef *dest, uLongf *destLen, Bytef *source,
-                    uLong sourceLen);
+int compressCB_zstd(Bytef *dest, uLongf *destLen, Bytef *source, uLong sourceLen);
 
-int uncompressCB_zstd(Bytef *dest, uLongf *destLen, Bytef *source,
-                      uLong sourceLen);
+int uncompressCB_zstd(Bytef *dest, uLongf *destLen, Bytef *source, uLong sourceLen);
 
-uLong compressBound_zstd(uLong sourceLen);
+uLong compressBoundCB_zstd(uLong sourceLen);
 
-void zstd_init(callback_t *cb_zstd);
 
 #ifdef __cplusplus
 }

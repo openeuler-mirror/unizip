@@ -166,21 +166,7 @@ int snappy_compress_new(char *source, size_t sourceLen, char *dest, size_t *dest
     if (dest == NULL || destLen == NULL || source == NULL) {
         return UNIZIP_DATA_ERROR;
     }
-    struct snappy_ctx *ctx = snappy_allocate();
-    if (ctx == NULL) {
-        return UNIZIP_MEM_ERROR;
-    }
-    int ret;
-    ret = snappy_deflateInit(ctx, 0);
-    if (ret != SNAPPY_OK) {
-        return ret;
-    }
-    ctx->input = source;
-    ctx->input_length = sourceLen;
-    ctx->compressed = dest;
-    ctx->compressed_length = *destLen;
-    ret = snappy_compress(ctx->input, ctx->input_length, ctx->compressed, &(ctx->compressed_length));
-    *destLen = ctx->compressed_length;
+    int ret = snappy_compress(source, sourceLen, dest, destLen);
     return snappy_error(ret);
 }
 
@@ -189,21 +175,7 @@ int snappy_decompress_new(char *source, size_t sourceLen, char *dest, size_t *de
     if (dest == NULL || destLen == NULL || source == NULL) {
         return UNIZIP_DATA_ERROR;
     }
-    struct snappy_ctx *ctx = snappy_allocate();
-    if (ctx == NULL) {
-        return UNIZIP_MEM_ERROR;
-    }
-    int ret;
-    ret = snappy_inflateInit(ctx);
-    if (ret != SNAPPY_OK) {
-        return ret;
-    }
-    ctx->compressed = source;
-    ctx->compressed_length = sourceLen;
-    ctx->uncompressed = dest;
-    ctx->uncompressed_length = *destLen;
-    ret = snappy_uncompress(ctx->compressed, ctx->compressed_length, ctx->uncompressed, &(ctx->uncompressed_length));
-    *destLen = ctx->uncompressed_length;
+    int ret = snappy_uncompress(source, sourceLen, dest, destLen);
     return snappy_error(ret);
 }
 

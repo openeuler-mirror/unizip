@@ -20,10 +20,10 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  ********************************************************************************/
-#include <gtest/gtest.h>
-#include <lzma.h>
 #include "test_util.h"
 #include "unizip_adapt.h"
+#include <gtest/gtest.h>
+#include <lzma.h>
 
 void xz_Deflate_func(char *next_in, char *next_out, uLong avail_in, uLong avail_out)
 {
@@ -56,50 +56,54 @@ void xz_Inflate_func(char *next_in, char *next_out, uLong avail_in, uLong avail_
     next_out[strm.total_out] = '\0';
 }
 
-const util_func util_xz = {xz_Deflate_func, xz_Inflate_func};
+void xz_SetParamsDeflate_fun(unizip_streamp strm) { return; }
+
+void xz_SetParamsInflate_fun(unizip_streamp strm) { return; }
+
+const util_func util_xz = {xz_Deflate_func, xz_Inflate_func, xz_SetParamsDeflate_fun, xz_SetParamsInflate_fun};
 
 TEST(Xz_testcases, testVersion)
 {
-    SetValue(9);
+    SetValue(8);
     test_version();
 }
 TEST(Xz_testcases, testDeflateInitEnd)
 {
-    SetValue(9);
+    SetValue(8);
     test_DeflateInitEnd();
 }
 TEST(Xz_testcases, testDeflateSeg)
 {
-    SetValue(9);
-    test_DeflateSeg(&util_xz, 200, nullptr);
+    SetValue(8);
+    test_DeflateSeg(&util_xz, 1);
 }
 TEST(Xz_testcases, testDeflateAll)
 {
-    SetValue(9);
-    test_DeflateAll(&util_xz, 300, nullptr);
+    SetValue(8);
+    test_DeflateAll(&util_xz, 1);
 }
 TEST(Xz_testcases, testDeflateCopyReset)
 {
-    SetValue(9);
+    SetValue(8);
     test_DeflateCopyReset();
 }
 TEST(Xz_testcases, testInflateInitEnd)
 {
-    SetValue(9);
+    SetValue(8);
     test_InflateInitEnd();
 }
 TEST(Xz_testcases, testInflateSeg)
 {
-    SetValue(9);
-    test_InflateSeg(&util_xz, 300, nullptr);
+    SetValue(8);
+    test_InflateSeg(&util_xz, 1);
 }
 TEST(Xz_testcases, testInflateAll)
 {
-    SetValue(9);
-    test_InflateAll(&util_xz, 200, nullptr);
+    SetValue(8);
+    test_InflateAll(&util_xz);
 }
 TEST(Xz_testcases, testInflateCopyReset)
 {
-    SetValue(9);
+    SetValue(8);
     test_InflateCopyReset();
 }

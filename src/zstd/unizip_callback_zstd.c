@@ -105,15 +105,9 @@ int inflateEndCB_zstd(unizip_streamp strm)
     return zstd_inflateEnd(strm->ud);
 }
 
-int deflateCopyCB_zstd(unizip_streamp dest, unizip_streamp source)
-{
-    return zstd_deflatecopy(dest->ud, source->ud);
-}
+int deflateCopyCB_zstd(unizip_streamp dest, unizip_streamp source) { return zstd_deflatecopy(dest->ud, source->ud); }
 
-int inflateCopyCB_zstd(unizip_streamp dest, unizip_streamp source)
-{
-    return zstd_inflatecopy(dest->ud, source->ud);
-}
+int inflateCopyCB_zstd(unizip_streamp dest, unizip_streamp source) { return zstd_inflatecopy(dest->ud, source->ud); }
 
 int deflateResetCB_zstd(unizip_streamp strm)
 {
@@ -135,39 +129,16 @@ int inflateResetCB_zstd(unizip_streamp strm)
     return zstd_inflateInit(strm->ud);
 }
 
-int compressCB_zstd(Bytef *dest, uLongf *destLen, Bytef *source,
-                    uLong sourceLen)
+int compressCB_zstd(Bytef *dest, uLongf *destLen, Bytef *source, uLong sourceLen)
 {
     int ret = zstd_compress((char *)dest, destLen, (char *)source, sourceLen);
     return ret;
 }
 
-int uncompressCB_zstd(Bytef *dest, uLongf *destLen, Bytef *source,
-                      uLong sourceLen)
+int uncompressCB_zstd(Bytef *dest, uLongf *destLen, Bytef *source, uLong sourceLen)
 {
     int ret = zstd_decompress((char *)dest, destLen, (char *)source, sourceLen);
     return ret;
 }
 
-uLong compressBound_zstd(uLong sourceLen)
-{
-    return zstd_compressBound(sourceLen);
-}
-
-void zstd_init(callback_t *cb_zstd)
-{
-    cb_zstd->versionCB = versionCB_zstd;
-    cb_zstd->deflateCB = deflateCB_zstd;
-    cb_zstd->deflateInitCB = deflateInitCB_zstd;
-    cb_zstd->deflateEndCB = deflateEndCB_zstd;
-    cb_zstd->inflateInitCB = inflateInitCB_zstd;
-    cb_zstd->inflateCB = inflateCB_zstd;
-    cb_zstd->inflateEndCB = inflateEndCB_zstd;
-    cb_zstd->deflateCopyCB = deflateCopyCB_zstd;
-    cb_zstd->inflateCopyCB = inflateCopyCB_zstd;
-    cb_zstd->deflateResetCB = deflateResetCB_zstd;
-    cb_zstd->inflateResetCB = inflateResetCB_zstd;
-    cb_zstd->compressCB = compressCB_zstd;
-    cb_zstd->uncompressCB = uncompressCB_zstd;
-    cb_zstd->compressBoundCB = compressBound_zstd;
-}
+uLong compressBoundCB_zstd(uLong sourceLen) { return zstd_compressBound(sourceLen); }

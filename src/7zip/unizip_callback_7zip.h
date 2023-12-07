@@ -28,15 +28,11 @@ int deflateResetCB_7zip(unizip_streamp strm);
 
 int inflateResetCB_7zip(unizip_streamp strm);
 
-int compressCB_7zip(Bytef *dest, uLongf *destLen, Bytef *source,
-                    uLong sourceLen);
+int compressCB_7zip(Bytef *dest, uLongf *destLen, Bytef *source, uLong sourceLen);
 
-int uncompressCB_7zip(Bytef *dest, uLongf *destLen, Bytef *source,
-                      uLong sourceLen);
+int uncompressCB_7zip(Bytef *dest, uLongf *destLen, Bytef *source, uLong sourceLen);
 
-uLong compressBound_7zip(uLong sourceLen);
-
-void zip7_init(callback_t *cb_7zip);
+uLong compressBoundCB_7zip(uLong sourceLen);
 
 #ifdef __cplusplus
 }

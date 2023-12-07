@@ -5,6 +5,7 @@
  *
  * Authors:
  * chen-yufan <1109674186@qq.com>
+ * shen-yi <1847401037@qq.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,16 +25,30 @@
 #define SRC_UNIZIP_STRUCT_H_
 #include <zlib.h>
 
-#define CASE_ZLIB 1
-#define CASE_BZIP2 2
-#define CASE_BROTLI 3
-#define CASE_LZ4 4
-#define CASE_SNAPPY 5
-#define CASE_ZSTD 6
-#define CASE_7ZIP 7
-#define CASE_UADK 8
-#define CASE_XZ 9
-#define CASE_GZIP 10
+#define CASE_ZLIB 0
+#define CASE_BZIP2 1
+#define CASE_BROTLI 2
+#define CASE_LZ4 3
+#define CASE_SNAPPY 4
+#define CASE_ZSTD 5
+#define CASE_7ZIP 6
+#define CASE_UADK 7
+#define CASE_XZ 8
+#define CASE_GZIP 9
+#define CASE_INVALID 10
+
+enum Z_ALG {
+    ALG_ZLIB,
+    ALG_BZIP2,
+    ALG_BROTLI,
+    ALG_LZ4,
+    ALG_SNAPPY,
+    ALG_ZSTD,
+    ALG_7ZIP,
+    ALG_UADK,
+    ALG_XZ,
+    ALG_GZIP,
+};
 
 typedef struct unizip_stream_s {
     z_const Bytef *next_in; /* next input byte */
@@ -65,6 +80,7 @@ typedef struct unizip_stream_s {
 typedef unizip_stream *unizip_streamp;
 
 typedef struct callback {
+    enum Z_ALG alg;
     const char *(*versionCB)();
     int (*deflateInitCB)();
     int (*deflateCB)();
@@ -83,12 +99,11 @@ typedef struct callback {
     int (*inflateInit2CB)();
     int (*compress2CB)();
     int (*uncompress2CB)();
-    int (*deflateParamsCB)();
     int (*deflateSetDictionaryCB)();
-    int (*deflatePendingCB)();
-    int (*deflateSetHeaderCB)();
     int (*inflateSetDictionaryCB)();
+    int (*deflateSetHeaderCB)();
     int (*inflateGetHeaderCB)();
+    int (*deflateParamsCB)();
+    int (*deflatePendingCB)();
 } callback_t;
-
 #endif // SRC_UNIZIP_STRUCT_H_

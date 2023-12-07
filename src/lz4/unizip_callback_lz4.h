@@ -46,14 +46,10 @@ int deflateResetCB_lz4(unizip_streamp strm);
 
 int inflateResetCB_lz4(unizip_streamp strm);
 
-int compressCB_lz4(Bytef *dest, uLongf *destLen, const Bytef *source,
-                   uLong sourceLen);
+int compressCB_lz4(Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen);
 
-int uncompressCB_lz4(Bytef *dest, uLongf *destLen, const Bytef *source,
-                     uLong sourceLen);
+int uncompressCB_lz4(Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen);
 
-uLong compressBound_lz4(uLong sourceLen);
-
-void lz4_init(callback_t *cb_lz4);
+uLong compressBoundCB_lz4(uLong sourceLen);
 
 #endif // SRC_LZ4_UNIZIP_CALLBACK_LZ4_H_

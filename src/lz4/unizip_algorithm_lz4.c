@@ -20,11 +20,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  ********************************************************************************/
-#include "unizip_algorithm_lz4.h"
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
 #include "unizip_error_code.h"
+#include "unizip_algorithm_lz4.h"
 
 void *lz4_allocate(void)
 {
@@ -115,7 +115,7 @@ int lz4_deflateprocess(struct lz4_ctx *ctx)
 {
     ctx->input_length = ctx->total_in;
     int ret =
-        LZ4_compress_default(ctx->src, ctx->dst, ctx->total_in, ctx->avail_out);
+        LZ4_compress_fast(ctx->src, ctx->dst, ctx->total_in, ctx->avail_out, ctx->level);
     if (ret <= 0)
         return UNIZIP_BUF_ERROR; // too small output
 

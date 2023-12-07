@@ -25,7 +25,7 @@
 #include <lz4.h>
 #include "unizip_error_code.h"
 #define levelMin_lz4 0
-#define levelMax_lz4 9
+#define levelMax_lz4 65537
 #define zlibAction_end 4
 struct lz4_ctx {
     char *next_in;

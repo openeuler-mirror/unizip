@@ -18,24 +18,24 @@ extern "C" {
 #endif
 
 struct zip7_ctx {
-  char *dest;
-  size_t destLen;
-  char *src;
-  size_t srcLen;
+    char *dest;
+    size_t destLen;
+    char *src;
+    size_t srcLen;
 
-  int level;
+    int level;
 
-  // inflate
-  CLzmaDec dec;
-  ELzmaStatus status;
+    // inflate
+    CLzmaDec dec;
+    ELzmaStatus status;
 
-  // zlib
-  char *next_in;
-  int avail_in;
-  long total_in;
-  char *next_out;
-  int avail_out;
-  long total_out;
+    // zlib
+    char *next_in;
+    int avail_in;
+    long total_in;
+    char *next_out;
+    int avail_out;
+    long total_out;
 };
 
 int zip7_map_error(int ret);
