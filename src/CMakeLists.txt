@@ -72,7 +72,7 @@ if (ENABLE_LIBUNIZIP)
 
     # set libunizip compile flags
     set_target_properties(libunizip PROPERTIES PREFIX "")
-    target_link_libraries(libunizip ${check_dep_libs} z lz4 brotlidec brotlicommon brotlienc snappy bz2 lzma zstd 7lzma ${wd_lib})
+    target_link_libraries(libunizip ${check_dep_libs} z lz4 brotlidec brotlicommon brotlienc snappy bz2 lzma zstd ${LIB7LZMA_LIBRARY} ${wd_lib})
 
     if (CMAKE_TOOLCHAIN_FILE)
         target_link_directories(libunizip PUBLIC ${CMAKE_LIBRARY_PATH})

@@ -30,7 +30,7 @@ macro(_DEFINE_NEW_TEST)
         pthread
         gpg-error
         gmp
-        z lz4 brotlidec brotlicommon brotlienc snappy bz2 lzma zstd 7lzma
+        z lz4 brotlidec brotlicommon brotlienc snappy bz2 lzma zstd ${LIB7LZMA_LIBRARY}
         )
 
     target_include_directories(${ARGV0} PUBLIC
