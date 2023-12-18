@@ -94,10 +94,7 @@ With:
 #include <zlib.h>
 #endif
 #else
-#include "unizip_adapt.h"
-#define z_stream_s unizip_stream_s    //Rename the structure
-#define z_stream unizip_stream        //Rename the structure
-#define z_streamp unizip_streamp      //Rename the structure
+#include "unizip.h"
 #endif
 ```
 

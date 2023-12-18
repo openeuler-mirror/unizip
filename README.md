@@ -94,10 +94,7 @@ fi
 #include <zlib.h>
 #endif
 #else
-#include "unizip_adapt.h"
-#define z_stream_s unizip_stream_s		// 重命名结构体
-#define z_stream unizip_stream			// 重命名结构体
-#define z_streamp unizip_streamp		// 重命名结构体
+#include "unizip.h"
 #endif
 ```
 
